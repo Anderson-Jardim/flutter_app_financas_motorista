@@ -53,7 +53,7 @@ class _ProfileState extends State<Profile> {
   }
 
   //update profile
-  void updateProfile() async {
+  /* void updateProfile() async {
     ApiResponse response = await updateUser(txtNameController.text, getStringImage(_imageFile));
       setState(() {
         loading = false;
@@ -73,7 +73,7 @@ class _ProfileState extends State<Profile> {
         content: Text('${response.error}')
       ));
     }
-  }
+  } */
 
   @override
   void initState() {
@@ -125,7 +125,7 @@ class _ProfileState extends State<Profile> {
               setState(() {
                 loading = true;
               });
-              updateProfile();
+              /* updateProfile(); */
             }
           })
         ],

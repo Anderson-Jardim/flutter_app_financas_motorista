@@ -1,3 +1,4 @@
+import 'package:app_fingo/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
@@ -7,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 
 import '../services/user_service.dart';
+import 'infoone.dart';
 
 
 
@@ -55,6 +57,7 @@ double totalExpense = 0.0;
           );
 
     if (response.statusCode == 201 || response.statusCode == 200) {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Gastos enviados com sucesso!')));
       if (!_isSubmitted) {
@@ -124,18 +127,15 @@ double totalExpense = 0.0;
                           ),
                           textAlign: TextAlign.left,
                         ),
-
-              SizedBox(height: height * 0.05),
-
+              SizedBox(height: height * 0.05,),
               Text(
                 'Nos conte seus gastos mensais',
                 style: GoogleFonts.inter(
                   fontSize: 19,
-                )
-
+                ),
               ),
               SizedBox(height: height * 0.03),
-
+              
               Divider(
                 color: Colors.grey,
                 thickness: 1,
@@ -147,9 +147,7 @@ double totalExpense = 0.0;
                   fontSize: 11,
                 )
               ),
-              SizedBox(height: height * 0.02),
-
-              
+              SizedBox(height: height * 0.02,),            
               Wrap(
                 spacing: 8.0,
                 runSpacing: 8.0,
@@ -201,25 +199,15 @@ double totalExpense = 0.0;
                     )
                   ),
                 ],
-              ),
-              
+              ),         
+
               Divider(
                 color: Colors.grey,
                 thickness: 1,
               ),
 
-              SizedBox(height: height * 0.05),
-
-
-
-
-
-
-
-
-
-
-Container(
+              SizedBox(height: height * 0.05,),
+             Container(
                 height: 60,
                 child: Row(
                   children: [
@@ -300,24 +288,7 @@ Container(
                   ],
                 ),
               ),
-
-
-SizedBox(height: height * 0.05),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-              
+          SizedBox(height: height * 0.05,),         
                /*  TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(labelText: 'Nome do Gasto'),
@@ -342,7 +313,6 @@ SizedBox(height: height * 0.05),
                     return null;
                   },
                 ), */
-                
                 ElevatedButton(
                   onPressed: _addGasto,
                   child: Text(
@@ -359,13 +329,14 @@ SizedBox(height: height * 0.05),
                       ),
                 ),
                 ),
-                SizedBox(height: height * 0.05),
-
+                SizedBox(height: height * 0.05,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
+                    },
                     child: Text(
                       'Anterior',
                       style: GoogleFonts.poppins(
@@ -382,7 +353,8 @@ SizedBox(height: height * 0.05),
                     ),
                   ),
                 ElevatedButton(
-                  onPressed: _sendGastos,
+                  onPressed: _sendGastos, 
+                  
                    child: Text(
                       'Próximo',
                       style: GoogleFonts.poppins(
@@ -395,15 +367,11 @@ SizedBox(height: height * 0.05),
                       minimumSize: Size(170, 45),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(13),
-                      ),
-                    ),
+                   ),
                   ),
-                
-                  ],
-
-
-                ),
-
+                 ),    
+                ],
+               ),
                /*  SizedBox(height: 20),
                 Expanded(
                   child: ListView.builder(

@@ -11,6 +11,9 @@ const postsURL = baseURL + '/posts';
 const commentsURL = baseURL + '/comments';
 const gastosURL = baseURL + '/expenses';
 const gastosURLupdate = baseURL + '/expenses';
+const InfooneURL = baseURL + '/infoone';
+const meslucrosURL = baseURL + '/meslucros';
+const classcorridasURL = baseURL + '/classcorridas';
 
 // ----- Errors -----
 const serverError = 'Server error';

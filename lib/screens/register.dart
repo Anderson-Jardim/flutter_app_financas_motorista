@@ -65,7 +65,7 @@ class _RegisterState extends State<Register> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: height * 0.1), // Add some space at the top
+                SizedBox(height: height * 0.06), // Add some space at the top
                 Container(
                   width: width * 0.8,
                   child: Column(
@@ -305,7 +305,7 @@ class _RegisterState extends State<Register> {
                   "Ao se cadastrar, você concorda com nossos\n termos, Política de privacidade e política de Cookies",
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: height * 0.1), // Add some space at the bottom
+                SizedBox(height: height * 0.01), // Add some space at the bottom
               ],
             ),
           ),

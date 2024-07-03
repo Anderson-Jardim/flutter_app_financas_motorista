@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                         
                         fontSize: constraints.maxWidth * 0.085,
                         fontWeight: FontWeight.w500,
-                      letterSpacing: 3,
+                      letterSpacing: 2,
                       height: 1
                         ), 
                       

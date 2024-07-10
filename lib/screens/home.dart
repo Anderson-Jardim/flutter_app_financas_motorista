@@ -1,4 +1,4 @@
-import 'package:app_fingo/screens/post_screen.dart';
+/* import 'package:app_fingo/screens/post_screen.dart';
 import 'package:app_fingo/screens/profile.dart';
 import 'package:flutter/material.dart';
 
@@ -66,4 +66,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
+} */

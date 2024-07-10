@@ -2,14 +2,14 @@ import 'user.dart';
 
 class Gastos{
   int? id;
-  String? expense;
-  int? totalExpense; 
+  String ? amount;
+  List<dynamic>? gastos;
   User? user;
 
   Gastos({
     this.id,
-    this.expense,
-    this.totalExpense,
+    this.amount,
+    this.gastos,
     this.user
   });
 
@@ -18,11 +18,11 @@ class Gastos{
   factory Gastos.fromJson(Map<String, dynamic> json){
     return Gastos(
       id: json['id'],
-      expense: json['expense'],
-      totalExpense: json['totalExpense'],
-      user: User(
-        id: json['user']['id']
-      )
+      amount: json['amount'],
+      gastos: json['gastos'],
+      /* user: User(
+        id: json['user']['id'],
+      ) */
     );
   }
 }

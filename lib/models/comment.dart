@@ -1,4 +1,4 @@
-import 'user.dart';
+/* import 'user.dart';
 
 class Comment {
   int? id;
@@ -23,4 +23,4 @@ class Comment {
       )
     );
   }
-}
+} */

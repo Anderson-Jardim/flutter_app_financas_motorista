@@ -1,12 +1,17 @@
 import 'dart:convert';
-import 'package:app_fingo/constant.dart';
-import 'package:app_fingo/screens/register/meslucros.dart';
+
+import 'package:app_fingo/screens/register/register.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
-import '../services/user_service.dart';
-import 'finalcad.dart';
+
+import '../../constant.dart';
+import '../../models/api_response.dart';
+import '../../models/classcorridas_model.dart';
+import '../../services/classcorridas_service.dart';
+import '../../services/user_service.dart';
+import '../welcome.dart';
 import 'meslucros.dart';
 
 class Classcorridas extends StatefulWidget {
@@ -15,6 +20,10 @@ class Classcorridas extends StatefulWidget {
 }
 
 class _ClasscorridasState extends State<Classcorridas> {
+  
+  List<classCorridasModel> classcorridasmodel = [];
+  bool loading = false;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController corridaBronzeController = TextEditingController();
@@ -59,7 +68,7 @@ class _ClasscorridasState extends State<Classcorridas> {
           );
 
           if (updateResponse.statusCode == 200) {
-           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> FinalCad()), (route) => false); 
+          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> FinalCad()), (route) => false); 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('classcorridas atualizado com sucesso')),
             );
@@ -82,7 +91,7 @@ class _ClasscorridasState extends State<Classcorridas> {
           );
 
           if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> FinalCad()), (route) => false);
+         //   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> FinalCad()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('classcorridas adicionado com sucesso')),
             );
@@ -109,6 +118,56 @@ class _ClasscorridasState extends State<Classcorridas> {
     }
   }
 
+
+   void getClassCorridas() async {
+    ApiResponse response = await getclassCorridasDetail();
+    if(response.error == null) {
+      setState(() {
+        List<classCorridasModel> classcorridasmodel = response.data as List<classCorridasModel>;
+        loading = false;
+
+        if(classcorridasmodel.isNotEmpty){
+          classCorridasModel firstItem = classcorridasmodel[0];
+        corridaBronzeController.text = '${firstItem.corrida_bronze ?? ''}';
+        corridaOuroController.text = '${firstItem.corrida_ouro ?? ''}';
+        corridaDiamanteController.text = '${firstItem.corrida_diamante ?? ''}';
+        }
+      });
+    }
+    else if (response.error == unauthorized) {
+    logout().then((value) => {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false)
+    });
+  } else {
+    // Detalhe o erro
+    String errorMessage = 'Erro ao obter ClassCorridas: ${response.error}';
+    if (response.errorDetail != null) {
+      errorMessage += '\nDetalhes do erro: ${response.errorDetail}';
+    }
+
+    // Log do erro detalhado (somente no console do desenvolvedor)
+    print('Erro detalhado ao obter ClassCorridas: ${response.error}');
+    if (response.errorDetail != null) {
+      print('Detalhes do erro: ${response.errorDetail}');
+    }
+    if (response.statusCode != null) {
+      print('Código de status HTTP: ${response.statusCode}');
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Erro ao obter ClassCorridas: ${response.error}'),
+    ));
+  }
+  }
+
+
+@override
+  void initState() {
+    super.initState();
+    getClassCorridas();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -123,7 +182,7 @@ class _ClasscorridasState extends State<Classcorridas> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: height * 0.1),
+                SizedBox(height: height * 0.05),
                 Container(
                   width: width * 0.8,
                   child: Column(
@@ -344,7 +403,7 @@ class _ClasscorridasState extends State<Classcorridas> {
                       ),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
                   },
                   child: Text(
                     'Anterior',
@@ -355,6 +414,32 @@ class _ClasscorridasState extends State<Classcorridas> {
                   ),
                 ),
                 SizedBox(height: height * 0.05),
+
+                /* ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey,
+                    padding: EdgeInsets.symmetric(
+                      vertical: height * 0.02,
+                      horizontal: width * 0.30
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(121),
+                      ),
+                  ),
+                   onPressed: (){
+              logout().then((value) => {
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false)
+              });
+            },
+                  child: Text(
+                    'Sair',
+                    style:  GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: height * 0.025,
+                        ),
+                  ),
+                ),
+                SizedBox(height: height * 0.05), */
               ],
             ),
           ),

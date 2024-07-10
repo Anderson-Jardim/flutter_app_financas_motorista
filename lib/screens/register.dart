@@ -1,4 +1,4 @@
-import 'dart:ui';
+/* import 'dart:ui';
 
 import 'package:app_fingo/screens/gastos.dart';
 import 'package:app_fingo/screens/welcome.dart';
@@ -313,4 +313,4 @@ class _RegisterState extends State<Register> {
       ),
     );
   }
-}
+} */

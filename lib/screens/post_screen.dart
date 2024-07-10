@@ -1,4 +1,4 @@
-import 'package:app_fingo/constant.dart';
+/* import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/comment_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -213,4 +213,4 @@ class _PostScreenState extends State<PostScreen> {
       ),
     );
   }
-}
+} */

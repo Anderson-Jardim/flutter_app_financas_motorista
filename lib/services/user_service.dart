@@ -4,22 +4,23 @@
 import 'dart:convert';
 import 'dart:io';
 
-
-import 'package:app_fingo/constant.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../constant.dart';
 import '../models/api_response.dart';
+import '../models/gastos_model.dart';
+import '../models/infoone_model.dart';
 import '../models/user.dart';
 
 // login
-Future<ApiResponse> login (String email, String password) async {
+Future<ApiResponse> login (String contact, String password) async {
   ApiResponse apiResponse = ApiResponse();
   try{
     final response = await http.post(
       Uri.parse(loginURL),
       headers: {'Accept': 'application/json'},
-      body: {'email': email, 'password': password}
+      body: {'contact': contact, 'password': password}
     );
 
     switch(response.statusCode){
@@ -47,7 +48,7 @@ Future<ApiResponse> login (String email, String password) async {
 
 
 // Register
-Future<ApiResponse> register(String name, String username, String email, String password) async {
+Future<ApiResponse> register(String name, String username, String contact, String password) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     final response = await http.post(
@@ -56,7 +57,7 @@ Future<ApiResponse> register(String name, String username, String email, String 
       body: {
         'name': name,
         'username': username,
-        'email': email,
+        'contact': contact,
         'password': password,
         'password_confirmation': password
       });
@@ -81,7 +82,7 @@ Future<ApiResponse> register(String name, String username, String email, String 
 }
 
 
-// User
+// Get User
 Future<ApiResponse> getUserDetail() async {
   ApiResponse apiResponse = ApiResponse();
   try {
@@ -111,8 +112,79 @@ Future<ApiResponse> getUserDetail() async {
   return apiResponse;
 }
 
+// Get Expenses
+Future<ApiResponse> getExpensesDetail() async {
+  ApiResponse apiResponse = ApiResponse();
+  String token = await getToken();
+  try {
+    final response = await http.get(
+      Uri.parse(expensesURL),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Decodificar a resposta JSON para uma lista dinâmica
+      List<dynamic> data = jsonDecode(response.body);
+
+      // Mapear cada item da lista para um InfooneModel e converter para uma lista tipada
+      List<Gastos> gastosList = data.map((item) => Gastos.fromJson(item)).toList();
+
+      // Definir os dados da resposta como a lista de InfooneModel
+      apiResponse.data = gastosList;
+    } else {
+      // Em caso de falha, definir o erro na resposta
+      apiResponse.error = 'Falha ao carregar dados';
+    }
+  } catch (e) {
+    apiResponse.error = 'Erro no servidor. Tente novamente mais tarde.';
+    apiResponse.errorDetail = e.toString(); // Captura a exceção
+  }
+  return apiResponse;
+}
+
+
+// Get Infoone
+Future<ApiResponse> getInfooneDetail() async {
+  ApiResponse apiResponse = ApiResponse();
+  String token = await getToken();
+  try {
+    final response = await http.get(
+      Uri.parse(InfooneURL),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Decodificar a resposta JSON para uma lista dinâmica
+      List<dynamic> data = jsonDecode(response.body);
+
+      // Mapear cada item da lista para um InfooneModel e converter para uma lista tipada
+      List<InfooneModel> infooneList = data.map((item) => InfooneModel.fromJson(item)).toList();
+
+      // Definir os dados da resposta como a lista de InfooneModel
+      apiResponse.data = infooneList;
+    } else {
+      // Em caso de falha, definir o erro na resposta
+      apiResponse.error = 'Falha ao carregar dados';
+    }
+  } catch (e) {
+    // Em caso de exceção, definir o erro na resposta
+    apiResponse.error = 'Erro no servidor. Tente novamente mais tarde.';
+  }
+  return apiResponse;
+}
+
+
+
+
+
 // Update user
-Future<ApiResponse> updateUser(String name, String? image) async {
+Future<ApiResponse> updateUser(String name, String username, String contact, String password) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
@@ -122,11 +194,12 @@ Future<ApiResponse> updateUser(String name, String? image) async {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token'
       }, 
-      body: image == null ? {
+       body: {
         'name': name,
-      } : {
-        'name': name,
-        'image': image
+        'username': username,
+        'contact': contact,
+        'password': password,
+        'password_confirmation': password
       });
       // user can update his/her name or name and image
 
@@ -172,35 +245,3 @@ String? getStringImage(File? file) {
   if (file == null) return null ;
   return base64Encode(file.readAsBytesSync());
 }
-
-
-
-
-
-
-
-/*  Future<ApiResponse> sendGastos(String gastos, String valorTotal) async {
-    /* final String apiUrl = 'https://sua-api-url.com/endpoint'; */
-
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'gastos': gastos,
-        'valorTotal': valorTotal,
-      }),
-    );
-     /* if (response.statusCode == 200) {
-      // Dados enviados com sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Dados enviados com sucesso!')),
-      );
-    } else {
-      // Falha ao enviar os dados
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Falha ao enviar os dados. Tente novamente.')),
-      );
-    } */
- } */

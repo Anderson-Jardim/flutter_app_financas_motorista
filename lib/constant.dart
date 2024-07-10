@@ -1,18 +1,17 @@
 // ----- STRINGS ------
 import 'package:flutter/material.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 
 const baseURL = 'http://192.168.0.118:8000/api';
 const loginURL = baseURL + '/login';
 const registerURL = baseURL + '/register';
+const expensesURL = baseURL + '/expenses';
 const logoutURL = baseURL + '/logout';
+const InfooneURL = baseURL + '/infoone';
+const meslucrosURL = baseURL + '/meslucros';
 const userURL = baseURL + '/user';
 const postsURL = baseURL + '/posts';
 const commentsURL = baseURL + '/comments';
-const gastosURL = baseURL + '/expenses';
-const gastosURLupdate = baseURL + '/expenses';
-const InfooneURL = baseURL + '/infoone';
-const meslucrosURL = baseURL + '/meslucros';
 const classcorridasURL = baseURL + '/classcorridas';
 
 // ----- Errors -----
@@ -21,25 +20,62 @@ const unauthorized = 'Unauthorized';
 const somethingWentWrong = 'Something went wrong, try again!';
 
 
-
 // --- input decoration
 InputDecoration kInputDecoration(String label) {
   return InputDecoration(
       labelText: label,
-      contentPadding: EdgeInsets.all(10),
-      border: OutlineInputBorder(borderSide: BorderSide(width: 1, color: Colors.black))
+      labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400
+                      
+                      ),
+                       focusedBorder: OutlineInputBorder(
+                     
+                    borderSide: BorderSide(color: Colors.black87, width: 3),
+                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.black,
+                      width: 3
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                  ),
     );
 }
 
 
 // button
+ElevatedButton kTextButton(String label, Function onPressed, Padding, FontStyle){
+  return ElevatedButton( 
+    child: Text(label, style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: FontStyle,
+                        ),),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.black),
+      padding: Padding,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(121),
+                      ),
+    ),
+    onPressed: () => onPressed(),
+  );
+}
 
-TextButton kTextButton(String label, Function onPressed){
-  return TextButton(
-    child: Text(label, style: TextStyle(color: Colors.white),),
-    style: ButtonStyle(
-      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.blue),
-      padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.symmetric(vertical: 10))
+// button anterior
+ElevatedButton kButtonAnterior(String label, Function onPressed, Padding, FontStyle){
+  return ElevatedButton( 
+    child: Text(label, style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: FontStyle,
+                        ),),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.grey),
+      padding: Padding,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(121),
+                      ),
     ),
     onPressed: () => onPressed(),
   );

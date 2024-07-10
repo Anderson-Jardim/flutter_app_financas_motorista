@@ -1,15 +1,15 @@
 class User {
   int? id;
   String? name;
-  String? image;
-  String? email;
+  String? username;
+  String? contact;
   String? token;
 
   User({
     this.id,
     this.name,
-    this.image,
-    this.email,
+    this.username,
+    this.contact,
     this.token
   });
 
@@ -19,8 +19,8 @@ class User {
     return User(
       id: json['user']['id'],
       name: json['user']['name'],
-      image: json['user']['image'],
-      email: json['user']['email'],
+      username: json['user']['username'],
+      contact: json['user']['contact'],
       token: json['token']
     );
   }

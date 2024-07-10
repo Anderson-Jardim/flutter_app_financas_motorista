@@ -1,24 +1,31 @@
-import 'package:app_fingo/screens/register.dart';
-import 'package:app_fingo/screens/register/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
 import 'dart:convert';
 
-import '../services/user_service.dart';
-import 'infoone.dart';
+import '../../constant.dart';
+import '../../models/api_response.dart';
+import '../../models/gastos_model.dart';
+import '../../services/user_service.dart';
+import '../welcome.dart';
+import 'register.dart';
 
 
 
 class GastosPage extends StatefulWidget {
+   
+
   @override
   _GastosPageState createState() => _GastosPageState();
 }
 
 class _GastosPageState extends State<GastosPage> {
+  List<Gastos>  getgastos = [];
+  bool loading = false;
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> _gastos = [];
   final _nameController = TextEditingController();
@@ -29,17 +36,91 @@ class _GastosPageState extends State<GastosPage> {
   );
   bool _isSubmitted = false;
   int? _expenseId;
-double totalExpense = 0.0;
+  double totalExpense = 0.0;
 
   final NumberFormat currencyFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
   
   Future<void> _sendGastos() async {
-    final url = _isSubmitted
-        ? 'http://192.168.0.118:8000/api/expenses/$_expenseId' // ajuste conforme necessário
-        : 'http://192.168.0.118:8000/api/expenses'; // ajuste conforme necessário
+    final url = Uri.parse(expensesURL);
     String token = await getToken(); // obtenha o token conforme necessário
 
-    final response = _isSubmitted
+  try{
+    // Verifique se o registro já existe
+      final checkResponse = await http.get(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+    if(checkResponse.statusCode == 200){
+      final List<dynamic> existingData = json.decode(checkResponse.body);
+      if (existingData.isNotEmpty) {
+        // Atualize o registro existente
+          final updateUrl = Uri.parse('$expensesURL/${existingData[0]['id']}');
+          final updateResponse = await http.put(
+            updateUrl,
+            headers: <String, String>{
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: json.encode({'gastos': _gastos}),
+          );
+          if (updateResponse.statusCode == 200) {
+          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gastos atualizado com sucesso')),
+            );
+          } else {
+            print('Falha ao atualizar Gastos: ${updateResponse.statusCode}');
+            print('Resposta do servidor: ${updateResponse.body}');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Falha ao atualizar Gastos: ${updateResponse.statusCode}')),
+            );
+          }
+      }else {
+          // Crie um novo registro
+          final createResponse = await http.post(
+            url,
+            headers: <String, String>{
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: json.encode({'gastos': _gastos}),
+          );
+
+          if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
+           // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gastos adicionado com sucesso')),
+            );
+          } else {
+            print('Falha ao adicionar Gastos: ${createResponse.statusCode}');
+            print('Resposta do servidor: ${createResponse.body}');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Falha ao adicionar Gastos: ${createResponse.statusCode}')),
+            );
+          }
+        }
+    }else {
+        print('Falha ao verificar Gastos: ${checkResponse.statusCode}');
+        print('Resposta do servidor: ${checkResponse.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Falha ao verificar Gastos: ${checkResponse.statusCode}')),
+        );
+      }
+
+  } catch (e){
+    print('Erro ao fazer requisição: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao fazer requisição')),
+      );
+  }
+
+
+
+  /*   final response = _isSubmitted
         ? await http.put(
             Uri.parse(url),
             headers: {
@@ -58,7 +139,7 @@ double totalExpense = 0.0;
           );
 
     if (response.statusCode == 201 || response.statusCode == 200) {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
+      //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Gastos enviados com sucesso!')));
       if (!_isSubmitted) {
@@ -74,7 +155,7 @@ double totalExpense = 0.0;
       print('Response body: ${response.body}'); // Adicionar print de depuração
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro ao enviar gastos.')));
-    }
+    } */
   }
 
   void _addGasto() {
@@ -100,6 +181,61 @@ double totalExpense = 0.0;
       _gastos.removeAt(index);
     });
   }
+
+
+
+
+void getExpenses() async {
+  ApiResponse response = await getExpensesDetail();
+  if (response.error == null) {
+    setState(() {
+      List<Gastos> getgastos = response.data as List<Gastos>;
+      loading = false;
+
+      if(getgastos.isNotEmpty){
+        Gastos firstItem = getgastos[0];
+       _gastos = List<Map<String, dynamic>>.from(firstItem.gastos ?? []); 
+         totalExpense = firstItem.amount != null ? double.tryParse(firstItem.amount.toString()) ?? 0.0 : 0.0;
+      }else {
+        _gastos = [];
+        totalExpense = 0.0;
+      }
+
+    });
+  } else if (response.error == unauthorized) {
+    logout().then((value) => {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false)
+    });
+  } else {
+    // Detalhe o erro
+    String errorMessage = 'Erro ao obter despesas: ${response.error}';
+    if (response.errorDetail != null) {
+      errorMessage += '\nDetalhes do erro: ${response.errorDetail}';
+    }
+
+    // Log do erro detalhado (somente no console do desenvolvedor)
+    print('Erro detalhado ao obter despesas: ${response.error}');
+    if (response.errorDetail != null) {
+      print('Detalhes do erro: ${response.errorDetail}');
+    }
+    if (response.statusCode != null) {
+      print('Código de status HTTP: ${response.statusCode}');
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Erro ao obter despesas: ${response.error}'),
+    ));
+  }
+}
+
+
+@override
+  void initState() {
+    super.initState();
+    getExpenses();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -388,6 +524,31 @@ double totalExpense = 0.0;
                   ),
                 ), */
                 SizedBox(height: height * 0.05),
+                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey,
+                    padding: EdgeInsets.symmetric(
+                      vertical: height * 0.02,
+                      horizontal: width * 0.30
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(121),
+                      ),
+                  ),
+                   onPressed: (){
+              logout().then((value) => {
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false)
+              });
+            },
+                  child: Text(
+                    'Sair',
+                    style:  GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: height * 0.025,
+                        ),
+                  ),
+                ),
+                SizedBox(height: height * 0.05), 
               ],
             ),
           ),

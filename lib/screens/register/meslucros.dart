@@ -1,13 +1,17 @@
-/* import 'dart:convert';
-import 'package:app_fingo/constant.dart';
-import 'package:app_fingo/screens/infoone.dart';
+import 'dart:convert';
+import 'package:app_fingo/screens/register/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
-import '../services/user_service.dart';
-import 'classcorridas.dart';
+import '../../constant.dart';
+import '../../models/api_response.dart';
+import '../../models/meslucro_model.dart';
+import '../../services/meslucro_service.dart';
+import '../../services/user_service.dart';
+import '../welcome.dart';
+
 
 class MesLucros extends StatefulWidget {
   @override
@@ -15,6 +19,9 @@ class MesLucros extends StatefulWidget {
 }
 
 class _MesLucrosState extends State<MesLucros> {
+
+  List<meslucroModel> meslucromodel = [];
+  bool loading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final MoneyMaskedTextController _meslucrosController = MoneyMaskedTextController(
@@ -61,7 +68,7 @@ class _MesLucrosState extends State<MesLucros> {
           );
 
           if (updateResponse.statusCode == 200) {
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Classcorridas()), (route) => false);
+          //  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Classcorridas()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Mês Lucro atualizado com sucesso')),
             );
@@ -84,7 +91,7 @@ class _MesLucrosState extends State<MesLucros> {
           );
 
           if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Classcorridas()), (route) => false);
+           // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Classcorridas()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Mes Lucros adicionado com sucesso')),
             );
@@ -110,6 +117,57 @@ class _MesLucrosState extends State<MesLucros> {
       );
     }
   }
+
+  void getMesLucro() async {
+    ApiResponse response = await getMeslucroDetail();
+    if(response.error == null) {
+      setState(() {
+        List<meslucroModel> meslucromodel = response.data as List<meslucroModel>;
+        loading = false;
+
+        if(meslucromodel.isNotEmpty){
+          meslucroModel firstItem = meslucromodel[0];
+        _meslucrosController.text = 'R\$${firstItem.qtd_mes_lucros ?? ''}';
+        }
+      });
+    }
+    /* else if(response.error == unauthorized){
+      logout().then((value) => {
+        //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false)
+      });
+    } */
+    else if (response.error == unauthorized) {
+    logout().then((value) => {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false)
+    });
+  } else {
+    // Detalhe o erro
+    String errorMessage = 'Erro ao obter meslucro: ${response.error}';
+    if (response.errorDetail != null) {
+      errorMessage += '\nDetalhes do erro: ${response.errorDetail}';
+    }
+
+    // Log do erro detalhado (somente no console do desenvolvedor)
+    print('Erro detalhado ao obter meslucro: ${response.error}');
+    if (response.errorDetail != null) {
+      print('Detalhes do erro: ${response.errorDetail}');
+    }
+    if (response.statusCode != null) {
+      print('Código de status HTTP: ${response.statusCode}');
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Erro ao obter meslucro: ${response.error}'),
+    ));
+  }
+  }
+
+ @override
+  void initState() {
+    getMesLucro();
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +314,7 @@ class _MesLucrosState extends State<MesLucros> {
                       ),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
                   },
                   child: Text(
                     'Anterior',
@@ -277,4 +335,3 @@ class _MesLucrosState extends State<MesLucros> {
     );
   }
 }
- */

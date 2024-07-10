@@ -1,4 +1,4 @@
-import 'user.dart';
+/* import 'user.dart';
 
 class Post {
   int? id;
@@ -37,4 +37,4 @@ factory Post.fromJson(Map<String, dynamic> json) {
   );
 }
 
-}
+} */

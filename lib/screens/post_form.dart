@@ -1,4 +1,4 @@
-import 'dart:io';
+/* import 'dart:io';
 import 'package:app_fingo/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -151,4 +151,4 @@ class _PostFormState extends State<PostForm> {
       ),
     );
   }
-}
+} */

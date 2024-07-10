@@ -1,22 +1,33 @@
 import 'dart:convert';
-import 'package:app_fingo/constant.dart';
-import 'package:app_fingo/screens/register/meslucros.dart';
+
+
+import 'package:app_fingo/screens/register/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
-import '../services/user_service.dart';
+
+import '../../constant.dart';
+import '../../models/api_response.dart';
+import '../../models/infoone_model.dart';
+import '../../models/user.dart';
+import '../../services/user_service.dart';
+import '../welcome.dart';
 import 'gastos.dart';
-import 'meslucros.dart';
+
 
 class Infoone extends StatefulWidget {
+  
   @override
   _InfooneState createState() => _InfooneState();
 }
 
 class _InfooneState extends State<Infoone> {
+ 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  List<InfooneModel> infooneList = [];
+  bool loading = false;
 
   final MoneyMaskedTextController _valorGasolinaController = MoneyMaskedTextController(
     leftSymbol: 'R\$',
@@ -33,9 +44,9 @@ class _InfooneState extends State<Infoone> {
     
     // Dados para enviar
     final Map<String, dynamic> data = {
-      'valor_gasolina': _valorGasolinaController.numberValue,
+      'valor_gasolina': _valorGasolinaController.numberValue ,
       'dias_trab': int.parse(diasTrabController.text),
-      'qtd_corridas': int.parse(qtdCorridasController.text),
+      'qtd_corridas': int.parse(qtdCorridasController.text) ,
       'km_litro': double.parse(kmLitroController.text),
     };
 
@@ -64,7 +75,7 @@ class _InfooneState extends State<Infoone> {
           );
 
           if (updateResponse.statusCode == 200) {
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Infoone atualizado com sucesso')),
             );
@@ -87,7 +98,7 @@ class _InfooneState extends State<Infoone> {
           );
 
           if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+           // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Infoone adicionado com sucesso')),
             );
@@ -113,6 +124,44 @@ class _InfooneState extends State<Infoone> {
       );
     }
   }
+
+
+void _fetchInfooneData() async {
+  ApiResponse response = await getInfooneDetail();
+  if (response.error == null) {
+    setState(() {
+      List<InfooneModel> infooneList = response.data as List<InfooneModel>;
+      loading = false;
+      
+      // Preenchendo os controladores de texto com dados do primeiro item da lista, se houver
+      if (infooneList.isNotEmpty) {
+        InfooneModel firstItem = infooneList[0];
+         _valorGasolinaController.text = 'R\$${firstItem.valorGasolina ?? ''}'; 
+        diasTrabController.text = firstItem.diasTrab?.toString() ?? '';
+        qtdCorridasController.text = firstItem.qtdCorridas?.toString() ?? '';
+        kmLitroController.text = firstItem.kmLitro?.toString() ?? '';
+      }
+    });
+  } else if (response.error == unauthorized) {
+    logout().then((value) {
+      //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false);
+    });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${response.error}')
+      )
+    );
+  }
+}
+
+@override
+  void initState() {
+    super.initState();
+    _fetchInfooneData();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -420,7 +469,7 @@ class _InfooneState extends State<Infoone> {
                       ),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>GastosPage()), (route) => false);
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
                   },
                   child: Text(
                     'Anterior',

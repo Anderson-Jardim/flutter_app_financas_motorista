@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,7 +7,7 @@ import '../models/api_response.dart';
 import '../models/user.dart';
 import '../services/user_service.dart';
 import 'home.dart';
-import 'register.dart';
+import 'register/register.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -39,11 +40,14 @@ class _LoginState extends State<Login> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Home()), (route) => false);
+   // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Home()), (route) => false);
   }
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
@@ -77,7 +81,12 @@ class _LoginState extends State<Login> {
                     _loginUser();
                   });
                 }
-            }),
+            },
+            EdgeInsets.symmetric(
+                      vertical: height * 0.02,
+                      horizontal: width * 0.30
+                      ),height * 0.025,
+            ),
             SizedBox(height: 10,),
             kLoginRegisterHint('Dont have an acount? ', 'Register', (){
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);

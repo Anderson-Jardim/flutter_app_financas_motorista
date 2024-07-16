@@ -11,6 +11,7 @@ import '../../models/api_response.dart';
 import '../../models/classcorridas_model.dart';
 import '../../services/classcorridas_service.dart';
 import '../../services/user_service.dart';
+import 'finalcad.dart';
 import '../welcome.dart';
 import 'meslucros.dart';
 
@@ -68,7 +69,7 @@ class _ClasscorridasState extends State<Classcorridas> {
           );
 
           if (updateResponse.statusCode == 200) {
-          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> FinalCad()), (route) => false); 
+           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> FinalCad()), (route) => false); 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('classcorridas atualizado com sucesso')),
             );
@@ -91,7 +92,7 @@ class _ClasscorridasState extends State<Classcorridas> {
           );
 
           if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-         //   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> FinalCad()), (route) => false);
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> FinalCad()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('classcorridas adicionado com sucesso')),
             );
@@ -174,6 +175,7 @@ class _ClasscorridasState extends State<Classcorridas> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: Color(0xFF171f20),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.06),
@@ -182,7 +184,7 @@ class _ClasscorridasState extends State<Classcorridas> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: height * 0.05),
+                SizedBox(height: height * 0.07),
                 Container(
                   width: width * 0.8,
                   child: Column(
@@ -193,7 +195,8 @@ class _ClasscorridasState extends State<Classcorridas> {
                         style: GoogleFonts.poppins(
                           fontSize: 45,
                           height: 1,
-                          fontWeight: FontWeight.w800
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white
                         ),
                         textAlign: TextAlign.left,
                       ),
@@ -206,7 +209,8 @@ class _ClasscorridasState extends State<Classcorridas> {
                         style: GoogleFonts.poppins(
                           fontSize: 20,
                           height: 1,
-                          fontWeight: FontWeight.w400
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white
                         ),
                         textAlign: TextAlign.left,
                       ),
@@ -235,184 +239,76 @@ class _ClasscorridasState extends State<Classcorridas> {
 
                   child: Column(
                     children: [
-                    TextFormField(
-                  controller: corridaBronzeController,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Corridas bronze devem lucrar',
-                    suffixText:"%" ,
-                    suffixStyle: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.w900),
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                    focusedBorder: OutlineInputBorder(
-                     
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                TextFormField(
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
+                      controller: corridaBronzeController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.left,
+                      validator: (val) => val!.isEmpty ? 'Campo vazio' : null,
+                      decoration: kInputDecoration('Corridas bronze devem lucrar')
                     ),
-                    
-
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 3
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                  ),                
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                  },
-                ),
                 
                 SizedBox(height: height * 0.04),
-
-                    TextFormField(
-                  controller: corridaOuroController,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Corridas ouro devem lucrar',
-                    suffixText:"%" ,
-                    suffixStyle: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.w900),
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                    focusedBorder: OutlineInputBorder(
-                     
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                 TextFormField(
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
+                      controller: corridaOuroController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.left,
+                      validator: (val) => val!.isEmpty ? 'Campo vazio' : null,
+                      decoration: kInputDecoration('Corridas ouro devem lucrar')
                     ),
-                    
-
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 3
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                  ),                
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                  },
-                ),
 
                 SizedBox(height: height * 0.04),
-                    TextFormField(
-                  controller: corridaDiamanteController,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Corridas diamante devem lucrar',
-                    suffixText:"%" ,
-                    suffixStyle: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.w900),
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                    focusedBorder: OutlineInputBorder(
-                     
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                    ),
                     
-
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 3
+              TextFormField(
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white),
+                 ), 
+                      controller: corridaDiamanteController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.left,
+                      validator: (val) => val!.isEmpty ? 'Campo vazio' : null,
+                      decoration: kInputDecoration('Corridas diamante devem lucrar')
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                  ),                
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                  },
-                ),
+
+
+
                 SizedBox(height: height * 0.04),
                ],
             ),
          ),
 
                 SizedBox(height: height * 0.05),
-             
-
-
-             ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                    padding: EdgeInsets.symmetric(
+                kTextButton('Próximo', () async {
+                    if (_formKey.currentState!.validate()) {
+                      _submitClasscorridas();
+                    }
+                  },
+                      EdgeInsets.symmetric(
                       vertical: height * 0.02,
                       horizontal: width * 0.30
                       ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(121),
-                      ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
+                      height * 0.025,
                       
-                    _submitClasscorridas();
-              
-                    }
-
-                  },
-                  child: Text(
-                    'Próximo',
-                    style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: height * 0.025,
-                        
-                        ),
-                  ),
-                ),
+                    ),
              
                 SizedBox(height: height * 0.02),
+                kButtonAnterior('Anterior', (){
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
 
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey,
-                    padding: EdgeInsets.symmetric(
+                },  EdgeInsets.symmetric(
                       vertical: height * 0.02,
                       horizontal: width * 0.30
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(121),
+                      height * 0.025,
                       ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
-                  },
-                  child: Text(
-                    'Anterior',
-                    style:  GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: height * 0.025,
-                        ),
-                  ),
-                ),
                 SizedBox(height: height * 0.05),
 
                 /* ElevatedButton(

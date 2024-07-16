@@ -1,4 +1,4 @@
-import 'package:app_fingo/screens/register.dart';
+import 'package:app_fingo/screens/login.dart';
 import 'package:app_fingo/screens/register/register.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,113 +6,116 @@ import 'package:google_fonts/google_fonts.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Container(
-            
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                  
-                    SizedBox(height: 70),
+    backgroundColor: Color(0xFF171f20),
+      body: SingleChildScrollView(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Container(
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.06),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [                 
+                      SizedBox(height: 40),
 
                     Container(
-                      
                       width: 300,
-                      height: 106,
-                      
-                      child: Text(
-                      
-                      
-                      'Olá!',
-                      style:  GoogleFonts.poppins(
-                        fontSize: constraints.maxWidth * 0.170,
-                        fontWeight: FontWeight.bold,
+                      height: 130, 
+                      child: Image.asset('assets/images/logo_01.png', alignment: Alignment.topLeft),
+                    ),
+
+                      Container(                  
+                        width: 300,
+                        height: 106,  
+                        child: Text(                      
+                        'Olá!',
+                        style:  GoogleFonts.poppins(
+                          fontSize: constraints.maxWidth * 0.190,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),                 
+                       ),
                       ),
-                    
-                    ),
-                    ),
-                    
-                    
-                    Container(
-                     
-                      width: 300,
                       
-                      child: Text(
-                      
-                      'Pronto para\nlucrar mais?',
-                      style: GoogleFonts.poppins( 
-                        
-                        fontSize: constraints.maxWidth * 0.085,
+                      Container(
+                        width: 300, 
+                        child: Text(
+                        'Pronto para\nlucrar mais?',
+                        style: GoogleFonts.poppins(  
+                        fontSize: constraints.maxWidth * 0.095,
                         fontWeight: FontWeight.w500,
-                      letterSpacing: 2,
-                      height: 1
-                        ), 
-                      
-                    ),
-                    ),
-                    
-                     SizedBox(height: 200), 
-                  
-                    
-                    ElevatedButton(
-                      onPressed: () {
-                         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.black,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: constraints.maxWidth * 0.13,
-                          vertical: 25,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(121),
-                        ),
+                        color: Color(0xFF00ff75),
+                        letterSpacing: 2,
+                        height: 1
+                         ), 
                       ),
-                      child: Text(
-                        'Criar nova conta',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: constraints.maxWidth * 0.045,
+                      ),
+                       SizedBox(height: 160), 
+
+                      ElevatedButton(
+                        onPressed: () {
+                           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            vertical: height * 0.02,
+                            horizontal: width * 0.17
                           ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey,
-                        
-                        
-                        padding: EdgeInsets.symmetric(
-                          horizontal: constraints.maxWidth * 0.25,
-                          vertical: 25,
-                          
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(121),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(121),
+                        child: Text(
+                          
+                          textAlign: TextAlign.center,
+                          'Criar nova conta',
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: constraints.maxWidth * 0.050,
+                            fontWeight: FontWeight.w400,
+                            ),
                         ),
                       ),
-                      child: Text(
-                        'Entrar',
-                        style:   GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: constraints.maxWidth * 0.045,
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Login()), (route) => false);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xFF00ff75),                        
+                          padding: EdgeInsets.symmetric(
+                            vertical: height * 0.02,
+                            horizontal: width * 0.30
+                            
+                          ),
                           
-                        )
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(121),
+                          ),
+                        ),
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          'Entrar',
+                          style:   GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: constraints.maxWidth * 0.050,
+                            fontWeight: FontWeight.w400,
+                          )
+                        ),
                       ),
-                    ),
                     
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

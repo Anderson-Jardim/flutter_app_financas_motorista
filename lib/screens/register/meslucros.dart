@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:app_fingo/screens/register/infoone.dart';
 import 'package:app_fingo/screens/register/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
@@ -11,6 +12,7 @@ import '../../models/meslucro_model.dart';
 import '../../services/meslucro_service.dart';
 import '../../services/user_service.dart';
 import '../welcome.dart';
+import 'classcorridas.dart';
 
 
 class MesLucros extends StatefulWidget {
@@ -29,9 +31,6 @@ class _MesLucrosState extends State<MesLucros> {
     decimalSeparator: ',',
     thousandSeparator: '.',
   );
-  
-
- 
 
   Future<void> _submitMesLucro() async {
     final url = Uri.parse(meslucrosURL); // Substitua com o seu URL de API Laravel
@@ -39,8 +38,7 @@ class _MesLucrosState extends State<MesLucros> {
     
     // Dados para enviar
     final Map<String, dynamic> data = {
-      'qtd_mes_lucros': _meslucrosController.numberValue,
-      
+      'qtd_mes_lucros': _meslucrosController.numberValue,   
     };
 
     try {
@@ -68,7 +66,7 @@ class _MesLucrosState extends State<MesLucros> {
           );
 
           if (updateResponse.statusCode == 200) {
-          //  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Classcorridas()), (route) => false);
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Classcorridas()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Mês Lucro atualizado com sucesso')),
             );
@@ -91,7 +89,7 @@ class _MesLucrosState extends State<MesLucros> {
           );
 
           if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-           // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Classcorridas()), (route) => false);
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Classcorridas()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Mes Lucros adicionado com sucesso')),
             );
@@ -175,7 +173,7 @@ class _MesLucrosState extends State<MesLucros> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      
+      backgroundColor: Color(0xFF171f20),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.06),
@@ -188,23 +186,33 @@ class _MesLucrosState extends State<MesLucros> {
                 Container(
                   width: width * 0.8,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(                   
-                        'Vamos\nfalar do\nfuturo?',
-                        style: GoogleFonts.poppins(
-                          fontSize: 60,
-                          height: 1,
-                          fontWeight: FontWeight.w800
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
+                      RichText(
+            text: TextSpan(
+              style: GoogleFonts.poppins(
+                fontSize: 70,
+                height: 1,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
+              children: <TextSpan>[
+                TextSpan(text: 'Vamos\nfalar do'),
+                TextSpan(
+                  text: '\nfuturo.',
+                  style: TextStyle(color: Color(0xFF00ff75)),
+                ),
+                
+              ],
+            ),
+            textAlign: TextAlign.left,
+          ),
 
                       SizedBox(height: height * 0.03),
                     ],
                   ),
                 ),
-                SizedBox(height: height * 0.06),
+                SizedBox(height: height * 0.03),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -213,117 +221,62 @@ class _MesLucrosState extends State<MesLucros> {
 
                     Container(
                       alignment: Alignment.topLeft,
-                      child: Text(                   
+                       child: Text(                   
                           'Quanto quer lucrar no mês?',
                           style: GoogleFonts.poppins(
-                            fontSize: 18,
+                            fontSize: 16,
                             height: 1,
-                            fontWeight: FontWeight.w400
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white
                           ),
                           textAlign: TextAlign.left,
 
                         ),
                     ),
+                     SizedBox(height: height * 0.02),
 
-                      SizedBox(height: height * 0.02),
-
-
-                      TextFormField(
-                      
-                  controller: _meslucrosController,
-                  keyboardType: TextInputType.number,
-                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600
-                  ),
-                  decoration: const InputDecoration(
-                    
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                    focusedBorder: OutlineInputBorder(
-                     
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                     TextFormField(
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
+                      controller: _meslucrosController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      validator: (val) => val!.isEmpty ? 'Campo vazio' : null,
+                      decoration: kInputDecoration('')
                     ),
-                    
 
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 3
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                  ),                
-                  ),
-                  
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                  },
-                ),
-                
+                          
                     ],
                   ),
                 ),
-                SizedBox(height: height * 0.05),
+                SizedBox(height: height * 0.15),
 
 
-               ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                    padding: EdgeInsets.symmetric(
-                      vertical: height * 0.02,
-                      horizontal: width * 0.30
-                      ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(121),
-                      ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {                    
-                    _submitMesLucro();
+               kTextButton('Próximo', () async {
+                    if (_formKey.currentState!.validate()) {
+                      _submitMesLucro();
                     }
-
                   },
-                  child: Text(
-                    'Próximo',
-                    style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: height * 0.025,
-                        
-                        ),
-                  ),
-                ),
-
-                SizedBox(height: height * 0.02),
-
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey,
-                    padding: EdgeInsets.symmetric(
+                      EdgeInsets.symmetric(
                       vertical: height * 0.02,
                       horizontal: width * 0.30
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(121),
+                      height * 0.025,
+                      
+                    ),
+              SizedBox(height: height * 0.02),
+
+                kButtonAnterior('Anterior', (){
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
+
+                },  EdgeInsets.symmetric(
+                      vertical: height * 0.02,
+                      horizontal: width * 0.30
                       ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
-                  },
-                  child: Text(
-                    'Anterior',
-                    style:  GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: height * 0.025,
-                        ),
-                  ),
-                ),
+                      height * 0.025,
+                      ),
                 SizedBox(height: height * 0.05),
 
                 

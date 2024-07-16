@@ -1,5 +1,4 @@
-import 'package:app_fingo/screens/gastos.dart';
-import 'package:app_fingo/screens/register.dart';
+import 'package:app_fingo/screens/login.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/loading.dart';
@@ -14,7 +13,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: Loading(),
     );
   }
 }

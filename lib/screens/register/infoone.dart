@@ -15,6 +15,7 @@ import '../../models/user.dart';
 import '../../services/user_service.dart';
 import '../welcome.dart';
 import 'gastos.dart';
+import 'meslucros.dart';
 
 
 class Infoone extends StatefulWidget {
@@ -34,9 +35,15 @@ class _InfooneState extends State<Infoone> {
     decimalSeparator: ',',
     thousandSeparator: '.',
   );
+  final MoneyMaskedTextController _kmLitroController = MoneyMaskedTextController(
+   /*  rightSymbol: 'KM'+'\' + 'l',  */
+    decimalSeparator: '.',
+    thousandSeparator: ',',
+    
+  );
   TextEditingController diasTrabController = TextEditingController();
   TextEditingController qtdCorridasController = TextEditingController();
-  TextEditingController kmLitroController = TextEditingController();
+  /* TextEditingController kmLitroController = TextEditingController(); */
 
   Future<void> _submitInfoone() async {
     final url = Uri.parse(InfooneURL); // Substitua com o seu URL de API Laravel
@@ -47,7 +54,7 @@ class _InfooneState extends State<Infoone> {
       'valor_gasolina': _valorGasolinaController.numberValue ,
       'dias_trab': int.parse(diasTrabController.text),
       'qtd_corridas': int.parse(qtdCorridasController.text) ,
-      'km_litro': double.parse(kmLitroController.text),
+      'km_litro': _kmLitroController.numberValue,
     };
 
     try {
@@ -75,7 +82,7 @@ class _InfooneState extends State<Infoone> {
           );
 
           if (updateResponse.statusCode == 200) {
-          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Infoone atualizado com sucesso')),
             );
@@ -98,7 +105,7 @@ class _InfooneState extends State<Infoone> {
           );
 
           if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-           // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Infoone adicionado com sucesso')),
             );
@@ -139,7 +146,7 @@ void _fetchInfooneData() async {
          _valorGasolinaController.text = 'R\$${firstItem.valorGasolina ?? ''}'; 
         diasTrabController.text = firstItem.diasTrab?.toString() ?? '';
         qtdCorridasController.text = firstItem.qtdCorridas?.toString() ?? '';
-        kmLitroController.text = firstItem.kmLitro?.toString() ?? '';
+        _kmLitroController.text = firstItem.kmLitro ?? '';
       }
     });
   } else if (response.error == unauthorized) {
@@ -169,7 +176,7 @@ void _fetchInfooneData() async {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-
+      backgroundColor: Color(0xFF171f20),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.06),
@@ -189,7 +196,8 @@ void _fetchInfooneData() async {
                         style: GoogleFonts.poppins(
                           fontSize: 50,
                           height: 1,
-                          fontWeight: FontWeight.w800
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white
                         ),
                       ),
 
@@ -210,7 +218,8 @@ void _fetchInfooneData() async {
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             height: 1,
-                            fontWeight: FontWeight.w400
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white
                           ),
                           textAlign: TextAlign.left,
 
@@ -219,44 +228,18 @@ void _fetchInfooneData() async {
                      SizedBox(height: height * 0.02),
 
                      TextFormField(
-                      
-                  controller: _valorGasolinaController,
-                  keyboardType: TextInputType.number,
-                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600
-                  ),
-                  decoration: const InputDecoration(
-                    
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                    focusedBorder: OutlineInputBorder(
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
+                      controller: _valorGasolinaController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      validator: (val) => val!.isEmpty ? 'Campo vazio' : null,
+                      decoration: kInputDecoration('')
+                    ),
+
                      
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                    ),
-                    
-
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 3
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                  ),                
-                  ),
-                  
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                  },
-                ),
-
                 SizedBox(height: height * 0.04),
 
 
@@ -268,7 +251,8 @@ void _fetchInfooneData() async {
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             height: 1,
-                            fontWeight: FontWeight.w400
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white
                           ),
                           textAlign: TextAlign.center,
 
@@ -276,44 +260,17 @@ void _fetchInfooneData() async {
                     ),
                      SizedBox(height: height * 0.02),
 
-              TextFormField(
-                      
-                  controller: diasTrabController,
-                  keyboardType: TextInputType.number,
-                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600
-                  ),
-                  decoration: const InputDecoration(
-                    
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                    focusedBorder: OutlineInputBorder(
-                     
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+             TextFormField(
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
+                      controller: diasTrabController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      validator: (val) => val!.isEmpty ? 'Campo Vazio' : null,
+                      decoration: kInputDecoration('')
                     ),
-                    
-
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 3
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                  ),                
-                  ),
-                  
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                  },
-                ),
      SizedBox(height: height * 0.04),
 
             Container(
@@ -323,7 +280,8 @@ void _fetchInfooneData() async {
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             height: 1,
-                            fontWeight: FontWeight.w400
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white
                           ),
                           textAlign: TextAlign.center,
 
@@ -332,43 +290,16 @@ void _fetchInfooneData() async {
                      SizedBox(height: height * 0.02),
 
               TextFormField(
-                      
-                  controller: qtdCorridasController,
-                  keyboardType: TextInputType.number,
-                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600
-                  ),
-                  decoration: const InputDecoration(
-                    
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                    focusedBorder: OutlineInputBorder(
-                     
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
+                      controller: qtdCorridasController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      validator: (val) => val!.isEmpty ? 'Campo Vazio' : null,
+                      decoration: kInputDecoration('')
                     ),
-                    
-
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 3
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                  ),                
-                  ),
-                  
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                  },
-                ),
      SizedBox(height: height * 0.04),
 
             Container(
@@ -378,7 +309,8 @@ void _fetchInfooneData() async {
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             height: 1,
-                            fontWeight: FontWeight.w400
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white
                           ),
                           textAlign: TextAlign.center,
 
@@ -387,98 +319,44 @@ void _fetchInfooneData() async {
                      SizedBox(height: height * 0.02),
 
               TextFormField(
-                      
-                  controller: kmLitroController,
-                  keyboardType: TextInputType.number,
-                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600
-                  ),
-                  decoration: const InputDecoration(
-                    
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                    focusedBorder: OutlineInputBorder(
-                     
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
+                      controller: _kmLitroController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      validator: (val) => val!.isEmpty ? 'Campo Vazio' : null,
+                      decoration: kInputDecoration('')
                     ),
-                    
-
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 3
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                  ),                
-                  ),
-                  
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-                    return null;
-                  },
-                ),
               ],
              ),              
            ),        
               SizedBox(height: height * 0.07),
 
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                    padding: EdgeInsets.symmetric(
+               kTextButton('Próximo', () async {
+                    if (_formKey.currentState!.validate()) {
+                      _submitInfoone();
+                    }
+                  },
+                      EdgeInsets.symmetric(
                       vertical: height * 0.02,
                       horizontal: width * 0.30
                       ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(121),
-                      ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {                    
-                    _submitInfoone();
-                    }
-
-                  },
-                  child: Text(
-                    'Próximo',
-                    style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: height * 0.025,
-                        
-                        ),
-                  ),
-                ),
+                      height * 0.025,
+                      
+                    ),
               SizedBox(height: height * 0.02),
 
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey,
-                    padding: EdgeInsets.symmetric(
+                kButtonAnterior('Anterior', (){
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>GastosPage()), (route) => false);
+
+                },  EdgeInsets.symmetric(
                       vertical: height * 0.02,
                       horizontal: width * 0.30
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(121),
+                      height * 0.025,
                       ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
-                  },
-                  child: Text(
-                    'Anterior',
-                    style:  GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: height * 0.025,
-                        ),
-                  ),
-                ),
                 SizedBox(height: height * 0.05),
               ],
             ),

@@ -1,5 +1,8 @@
 
+import 'package:app_fingo/screens/dashboard.dart';
+import 'package:app_fingo/screens/welcome.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constant.dart';
@@ -40,7 +43,7 @@ class _LoginState extends State<Login> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
-   // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Home()), (route) => false);
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Dashboard()), (route) => false);
   }
 
   @override
@@ -49,49 +52,195 @@ class _LoginState extends State<Login> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+    backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Login'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false);
+          },
+        ),
+        
         centerTitle: true,
       ),
-      body: Form(
-        key: formkey,
-        child: ListView(
-          padding: EdgeInsets.all(32),
-          children: [
-            TextFormField(
-              keyboardType: TextInputType.emailAddress,
-              controller: txtEmail,
-              validator: (val) => val!.isEmpty ? 'Invalid email address' : null,
-              decoration: kInputDecoration('Email')
-            ),
-            SizedBox(height: 10,),
-            TextFormField(
-              controller: txtPassword,
-              obscureText: true,
-              validator: (val) => val!.length < 6 ? 'Required at least 6 chars' : null,
-              decoration: kInputDecoration('Password')
-            ),
-            SizedBox(height: 10,),
-            loading? Center(child: CircularProgressIndicator(),)
-            :
-            kTextButton('Login', () {
-              if (formkey.currentState!.validate()){
-                  setState(() {
-                    loading = true;
-                    _loginUser();
-                  });
-                }
-            },
-            EdgeInsets.symmetric(
-                      vertical: height * 0.02,
-                      horizontal: width * 0.30
-                      ),height * 0.025,
-            ),
-            SizedBox(height: 10,),
-            kLoginRegisterHint('Dont have an acount? ', 'Register', (){
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
-            })
-          ],
+      body: SingleChildScrollView(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Container(
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.108),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [                 
+                      SizedBox(height: 20),
+
+                    Container(
+                      width: 400,
+                      height: 40, 
+                      child: Image.asset('assets/images/logo_02.png', alignment: Alignment.topLeft, ),
+                    ),
+
+                      Container(        
+                        alignment: Alignment.center,          
+                        width: 300,
+                        height: 106,  
+                        child: Text(                      
+                        'Bem vindo.',
+                        style:  GoogleFonts.inter(
+                          fontSize: constraints.maxWidth * 0.130,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),                 
+                       ),
+                      ),
+                      SizedBox(height: 50),
+                       Form(
+                    key: formkey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          style: TextStyle(color: Colors.grey),
+                          keyboardType: TextInputType.emailAddress,
+                          controller: txtEmail,
+                          validator: (val) => val!.isEmpty ? 'Invalid email address' : null,
+                          decoration: InputDecoration(
+                            
+                           labelText: 'E-mail ou celular',
+                           labelStyle: 
+                            GoogleFonts.inter(  
+                              fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                             color: Color(0xFFD3D3D3),
+                             ),
+                             border: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF171F20), ),
+                             ),
+                             focusedBorder: UnderlineInputBorder(         
+                            borderSide: BorderSide(color: Color(0xFF171F20)),              
+                               ),
+                              )
+                        ),
+
+                        SizedBox(height: 30,),
+
+                        TextFormField(
+                          style: TextStyle(color: Colors.grey),
+                          controller: txtPassword,
+                          obscureText: true,
+                          validator: (val) => val!.length < 6 ? 'minímo 6 caracteres' : null,
+                          decoration: InputDecoration(
+                            
+                           labelText: 'Senha',
+                           labelStyle: 
+                            GoogleFonts.inter(  
+                              fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                             color: Color(0xFFD3D3D3),
+                             ),
+                             border: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF171F20), ),
+                             ),
+                             focusedBorder: UnderlineInputBorder(         
+                            borderSide: BorderSide(color: Color(0xFF171F20),),              
+                               ),
+                              )
+                        ),
+                        SizedBox(height: 80,),
+                        loading? Center(child: CircularProgressIndicator(),)
+                        :
+                        /* kTextButton('Entrar', () {
+                          if (formkey.currentState!.validate()){
+                              setState(() {
+                                loading = true;
+                                _loginUser();
+                              });
+                            }
+                        },
+                        EdgeInsets.symmetric(
+                                  vertical: height * 0.02,
+                                  horizontal: width * 0.30
+                                  ),height * 0.025,
+                        ),
+ */
+                        ElevatedButton(
+                        onPressed: () {
+                          if (formkey.currentState!.validate()){
+                              setState(() {
+                                loading = true;
+                                _loginUser();
+                              });
+                            }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xFF00ff75),                        
+                          padding: EdgeInsets.symmetric(
+                            vertical: height * 0.02,
+                            horizontal: width * 0.30
+                            
+                          ),
+                          
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(121),
+                          ),
+                        ),
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          'Entrar',
+                          style:   GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: constraints.maxWidth * 0.041,
+                            fontWeight: FontWeight.w500,
+                          )
+                        ),
+                      ),
+                        SizedBox(height: 10,),
+                       
+                      ],
+                    ),
+                  ), 
+                       
+
+                      ElevatedButton(
+                        onPressed: () {
+                           /* Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false); */
+                        },
+                        style: ElevatedButton.styleFrom(
+
+                          primary: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            vertical: height * 0.02,
+                            horizontal: width * 0.14
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(121),
+                            side: BorderSide(color: Colors.black,),
+                            
+                          ),
+                        ),
+                        child: Text(
+                          
+                          textAlign: TextAlign.center,
+                          'Esqueci minha senha',
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: constraints.maxWidth * 0.041,
+                            fontWeight: FontWeight.w500,
+                            ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      
+                    
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

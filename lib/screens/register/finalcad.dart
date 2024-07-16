@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../models/user.dart';
+import '../dashboard.dart';
 
 class FinalCad extends StatefulWidget {
   @override
@@ -11,9 +15,9 @@ class _FinalCadState extends State<FinalCad> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-
+    
     return Scaffold(
-      
+        backgroundColor: Color(0xFF171f20),
         body: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: width * 0.06),
@@ -26,7 +30,8 @@ class _FinalCadState extends State<FinalCad> {
                   style: GoogleFonts.poppins(
                           fontSize: 45,
                           height: 1,
-                          fontWeight: FontWeight.w700
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white
                         ),
                 ),
                 SizedBox(height: 16.0),
@@ -35,7 +40,8 @@ class _FinalCadState extends State<FinalCad> {
                   style: GoogleFonts.poppins(
                           fontSize: 16,
                           height: 1,
-                          fontWeight: FontWeight.w400
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white
                         ),
                   textAlign: TextAlign.center,
                 ),
@@ -44,22 +50,24 @@ class _FinalCadState extends State<FinalCad> {
                   
                   child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
+                    primary: Color(0xFF00FF75),
                     padding: EdgeInsets.symmetric(
-                      vertical: height * 0.04,
-                      horizontal: width * 0.20
+                      vertical: height * 0.03,
+                      horizontal: width * 0.10
                       ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Dashboard()), (route) => false);
+                  },
                   child: Text(
-                    'Entrar no app',
+                    'Vamos rodar!',
                     style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: height * 0.025,
-                        
+                        color: Colors.black,
+                        fontSize: height * 0.040,
+                        fontWeight: FontWeight.w700
                         ),
                   ),
                 ),

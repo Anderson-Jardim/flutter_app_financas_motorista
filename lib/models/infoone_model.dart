@@ -7,7 +7,7 @@ class InfooneModel {
    int? diasTrab;
    int? qtdCorridas;
    User? user;
-   double? kmLitro;
+   String? kmLitro;
 
   InfooneModel({
      this.id,

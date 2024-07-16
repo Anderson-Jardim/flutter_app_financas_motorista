@@ -24,19 +24,21 @@ const somethingWentWrong = 'Something went wrong, try again!';
 InputDecoration kInputDecoration(String label) {
   return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400
-                      
-                      ),
-                       focusedBorder: OutlineInputBorder(
-                     
-                    borderSide: BorderSide(color: Colors.black87, width: 3),
+
+      labelStyle: 
+        GoogleFonts.poppins(  
+          fontWeight: FontWeight.w500,
+           color: Colors.white,
+          
+                 ),
+                focusedBorder: OutlineInputBorder(         
+                    borderSide: BorderSide(color: Colors.white, width: 3),
                     borderRadius: BorderRadius.all(Radius.circular(13.0)),
                     ),
                     enabledBorder: OutlineInputBorder(
+
                     borderSide: BorderSide(
-                      color: Colors.black,
+                      color: Colors.white,
                       width: 3
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(13.0)),
@@ -49,11 +51,12 @@ InputDecoration kInputDecoration(String label) {
 ElevatedButton kTextButton(String label, Function onPressed, Padding, FontStyle){
   return ElevatedButton( 
     child: Text(label, style: GoogleFonts.poppins(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: FontStyle,
+                        fontWeight: FontWeight.w400,
                         ),),
     style: ElevatedButton.styleFrom(
-      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.black),
+      backgroundColor: MaterialStateColor.resolveWith((states) => Color(0xFF00ff75)),
       padding: Padding,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(121),
@@ -67,11 +70,12 @@ ElevatedButton kTextButton(String label, Function onPressed, Padding, FontStyle)
 ElevatedButton kButtonAnterior(String label, Function onPressed, Padding, FontStyle){
   return ElevatedButton( 
     child: Text(label, style: GoogleFonts.poppins(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: FontStyle,
+                        fontWeight: FontWeight.w400,
                         ),),
     style: ElevatedButton.styleFrom(
-      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.grey),
+      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),
       padding: Padding,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(121),

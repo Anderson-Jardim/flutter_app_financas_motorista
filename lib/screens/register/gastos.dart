@@ -4,6 +4,7 @@ import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dart:convert';
 
@@ -12,6 +13,7 @@ import '../../models/api_response.dart';
 import '../../models/gastos_model.dart';
 import '../../services/user_service.dart';
 import '../welcome.dart';
+import 'infoone.dart';
 import 'register.dart';
 
 
@@ -68,7 +70,7 @@ class _GastosPageState extends State<GastosPage> {
             body: json.encode({'gastos': _gastos}),
           );
           if (updateResponse.statusCode == 200) {
-          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Gastos atualizado com sucesso')),
             );
@@ -91,7 +93,7 @@ class _GastosPageState extends State<GastosPage> {
           );
 
           if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-           // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MesLucros()), (route) => false);
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Gastos adicionado com sucesso')),
             );
@@ -243,7 +245,7 @@ void getExpenses() async {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      
+      backgroundColor: Color(0xFF171f20),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.06),
@@ -255,26 +257,38 @@ void getExpenses() async {
                 
                 SizedBox(height: height * 0.1),
 
-                Text(                   
-                          'Precisamos\nconhecer\nseu negócio.',
-                          style: GoogleFonts.poppins(
-                            fontSize: 45,
-                            height: 1,
-                            fontWeight: FontWeight.w800
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
+                RichText(
+            text: TextSpan(
+              style: GoogleFonts.poppins(
+                fontSize: 45,
+                height: 1,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
+              children: <TextSpan>[
+                TextSpan(text: 'Precisamos\nconhecer'),
+                TextSpan(
+                  text: '\nseu negócio.',
+                  style: TextStyle(color: Color(0xFF00ff75)),
+                ),
+                
+              ],
+            ),
+            textAlign: TextAlign.left,
+          ),
+
               SizedBox(height: height * 0.05,),
               Text(
                 'Nos conte seus gastos mensais',
                 style: GoogleFonts.inter(
                   fontSize: 19,
+                  color: Colors.white
                 ),
               ),
-              SizedBox(height: height * 0.03),
+              SizedBox(height: height * 0.02),
               
               Divider(
-                color: Colors.grey,
+                color: Colors.white,
                 thickness: 1,
               ),
 
@@ -282,6 +296,7 @@ void getExpenses() async {
                 'Gastos adicionados',
                 style: GoogleFonts.inter(
                   fontSize: 11,
+                  color: Colors.white
                 )
               ),
               SizedBox(height: height * 0.02,),            
@@ -295,22 +310,21 @@ void getExpenses() async {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Chip(
-                        backgroundColor: Colors.grey.shade300,
+                        backgroundColor: Color(0xFF004D1F),
                         shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
                         label: Text(
                           '${gasto['name']} - ${currencyFormat.format(gasto['amount'])}',
                           style: GoogleFonts.poppins(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
                       IconButton(
                         icon: Icon(Icons.close),
-                        color: Colors.black,
-                        
+                        color: Colors.white,
                         onPressed: () => _removeExpense(index),
                       ),
                     ],
@@ -326,20 +340,22 @@ void getExpenses() async {
                     'Total mensal',
                     style: GoogleFonts.inter(
                       fontSize: 11,
+                      color: Colors.white
                     )
                   ),
                   Text(
                     currencyFormat.format(totalExpense),
                     style: GoogleFonts.inter(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w500
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF00ff75)
                     )
                   ),
                 ],
               ),         
 
               Divider(
-                color: Colors.grey,
+                color: Colors.white,
                 thickness: 1,
               ),
 
@@ -349,37 +365,36 @@ void getExpenses() async {
                 child: Row(
                   children: [
                     Expanded(
-                      child: TextField(
+                      child: TextFormField(
                         
                         controller: _nameController,
                         style: GoogleFonts.inter(
-                          fontSize: 14,
-                          
+                          fontSize: 14,  
+                          textStyle: TextStyle(color:Colors.white)
                         ),
-
+                        
                         decoration: const InputDecoration(
-                          
                           labelText: 'Digite o tipo',
                           labelStyle: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             
                           ),
                          
                             
-                           focusedBorder: OutlineInputBorder(
-                       
-                      borderSide: BorderSide(color: Colors.black87, width: 3),
-                      borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                      ),
+                             focusedBorder: OutlineInputBorder(         
+                    borderSide: BorderSide(color: Colors.white, width: 3),
+                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                    ),
                       
 
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 3
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(13.0)),
+
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 3
                     ),
+                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                  ),
                         ),
                         inputFormatters: [
                       LengthLimitingTextInputFormatter(15), // Limitar a 10 caracteres
@@ -393,32 +408,30 @@ void getExpenses() async {
                         controller: _amountController,
                          keyboardType: TextInputType.number,
                         style: GoogleFonts.inter(
-                          fontSize: 14,
-                          
+                          fontSize: 14,  
+                          textStyle: TextStyle(color:Colors.white)
                         ),
-
+                        
                         decoration: const InputDecoration(
                           labelText: 'Digite o valor',
                           labelStyle: TextStyle(
-                            color: Colors.black,
+
+                            color: Colors.white,
                             
                           ),
                          
-                            
-                           focusedBorder: OutlineInputBorder(
-                       
-                      borderSide: BorderSide(color: Colors.black87, width: 3),
-                      borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                      ),
-                      
-
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 3
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                        focusedBorder: OutlineInputBorder(         
+                    borderSide: BorderSide(color: Colors.white, width: 3),
+                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
                     ),
+                    enabledBorder: OutlineInputBorder(
+
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 3
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                  ),
                         ),
                       ),
                     ),
@@ -450,65 +463,63 @@ void getExpenses() async {
                     return null;
                   },
                 ), */
-                ElevatedButton(
+
+              Container(
+                child: Center(
+                  child: Column(
+                    children: [
+                         ElevatedButton(
                   onPressed: _addGasto,
                   child: Text(
                   'Adicionar aos meus gastos',
                   style: GoogleFonts.poppins(
-                    fontSize: 18
+                    fontSize: 18,
                   ),
                   ),
                    style: ElevatedButton.styleFrom(
+                 
                   minimumSize: Size(double.infinity, 50),
-                  backgroundColor: Colors.black,
+                  backgroundColor: Color(0xFF004D1F),
                   shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13),
+                        borderRadius: BorderRadius.circular(11),
                       ),
                 ),
                 ),
                 SizedBox(height: height * 0.05,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                    onPressed: () {
-                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
-                    },
-                    child: Text(
-                      'Anterior',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        
+
+              kTextButton('Próximo', () async {
+                    if (_formKey.currentState!.validate()) {
+                      _sendGastos();
+                    }
+                  },
+                      EdgeInsets.symmetric(
+                      vertical: height * 0.02,
+                      horizontal: width * 0.30
                       ),
-                      ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      minimumSize: Size(170, 45),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13),
-                      ),
+                      height * 0.025,
+                      
                     ),
+                    SizedBox(height: height * 0.02),
+
+
+              kButtonAnterior('Anterior', (){
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
+
+                },  EdgeInsets.symmetric(
+                      vertical: height * 0.02,
+                      horizontal: width * 0.30
+                      ),
+                      height * 0.025,
+                      ),
+                    ],
                   ),
-                ElevatedButton(
-                  onPressed: _sendGastos, 
                   
-                   child: Text(
-                      'Próximo',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        
-                      ),
-                      ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      minimumSize: Size(170, 45),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13),
-                   ),
-                  ),
-                 ),    
-                ],
-               ),
+                ),
+              ),
+
+             
+                  SizedBox(height: height * 0.05),
+             
                /*  SizedBox(height: 20),
                 Expanded(
                   child: ListView.builder(
@@ -523,32 +534,9 @@ void getExpenses() async {
                     },
                   ),
                 ), */
-                SizedBox(height: height * 0.05),
-                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey,
-                    padding: EdgeInsets.symmetric(
-                      vertical: height * 0.02,
-                      horizontal: width * 0.30
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(121),
-                      ),
-                  ),
-                   onPressed: (){
-              logout().then((value) => {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false)
-              });
-            },
-                  child: Text(
-                    'Sair',
-                    style:  GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: height * 0.025,
-                        ),
-                  ),
-                ),
-                SizedBox(height: height * 0.05), 
+                
+                 
+                
               ],
             ),
           ),

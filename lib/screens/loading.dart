@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../constant.dart';
 import '../models/api_response.dart';
 import '../services/user_service.dart';
+import 'dashboard.dart';
 import 'login.dart';
 import 'register/gastos.dart';
 import 'register/infoone.dart';
@@ -25,7 +26,7 @@ class _LoadingState extends State<Loading> {
     else {
       ApiResponse response = await getUserDetail();
       if (response.error == null){
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>GastosPage()), (route) => false);
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Dashboard()), (route) => false);
       }
       else if (response.error == unauthorized){
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false);

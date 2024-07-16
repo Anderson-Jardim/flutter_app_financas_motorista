@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,9 +31,6 @@ class _RegisterState extends State<Register> {
     contactController  = TextEditingController(),
     passwordController = TextEditingController(),
     passwordConfirmController = TextEditingController();
-
-
-
 
 
   void _registerUser () async {
@@ -111,10 +109,6 @@ class _RegisterState extends State<Register> {
   }
 
 
-
-
-
-
  @override
   void initState() {
     getUser();
@@ -128,7 +122,7 @@ class _RegisterState extends State<Register> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      
+      backgroundColor: Color(0xFF171f20),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.06),
@@ -143,15 +137,25 @@ class _RegisterState extends State<Register> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(                   
-                        'Precisamos\nconhecer\nvocê.',
-                        style: GoogleFonts.poppins(
-                          fontSize: 45,
-                          height: 1,
-                          fontWeight: FontWeight.w800
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
+                      RichText(
+            text: TextSpan(
+              style: GoogleFonts.poppins(
+                fontSize: 45,
+                height: 1,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
+              children: <TextSpan>[
+                TextSpan(text: 'Precisamos\n'),
+                TextSpan(
+                  text: 'conhecer\nvocê.',
+                  style: TextStyle(color: Color(0xFF00ff75)),
+                ),
+                
+              ],
+            ),
+            textAlign: TextAlign.left,
+          ),
                     ],
                   ),
                 ),
@@ -164,6 +168,10 @@ class _RegisterState extends State<Register> {
                     children: [
 
                       TextFormField(
+                        style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
                       controller: contactController,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
@@ -186,6 +194,10 @@ class _RegisterState extends State<Register> {
                     SizedBox(height: height * 0.04),
 
                       TextFormField(
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
                       controller: nameController,
                       validator: (val) => val!.isEmpty ? 'Nome inválido' : null,
                       decoration: kInputDecoration('Nome completo')
@@ -193,6 +205,10 @@ class _RegisterState extends State<Register> {
                     SizedBox(height: height * 0.04),
 
                       TextFormField(
+                         style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
                       controller: usernameController,
                       validator: (val) => val!.isEmpty ? 'Nome de usuário inválido' : null,
                       decoration: kInputDecoration('Nome de usuário')
@@ -201,6 +217,10 @@ class _RegisterState extends State<Register> {
                     
                     
                     TextFormField(
+                       style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
                       controller: passwordController,
                       obscureText: true,
                       validator: (val) => val!.length < 6 ? 'Senha inferior a 6 digitos' : null,
@@ -208,6 +228,10 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: height * 0.04),
                     TextFormField(
+                       style: GoogleFonts.poppins(  
+                        fontWeight: FontWeight.w500,
+                        textStyle: TextStyle(color:Colors.white)
+                 ), 
                       controller: passwordConfirmController,
                       obscureText: true,
                       validator: (val) => val != passwordController.text ? 'A senha não é a mesma' : null,
@@ -253,10 +277,16 @@ class _RegisterState extends State<Register> {
                       height * 0.025,
                       ),
                   SizedBox(height: height * 0.05),
-                const Text(
-                  "Ao se cadastrar, você concorda com nossos\n termos, Política de privacidade e política de Cookies",
-                  textAlign: TextAlign.center,
-                ),
+             
+
+                Text(
+                        textAlign: TextAlign.center,
+                           "Ao se cadastrar, você concorda com nossos\nTermos, Política de privacidade e política de Cookies",
+                        style:   GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 12
+                        )
+                      ),
                 SizedBox(height: height * 0.01), // Add some space at the bottom              
               ],
             ),
@@ -266,3 +296,4 @@ class _RegisterState extends State<Register> {
     );
   }
 }
+

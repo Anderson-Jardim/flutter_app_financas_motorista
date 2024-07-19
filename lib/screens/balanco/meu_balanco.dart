@@ -1,13 +1,13 @@
 import 'package:app_fingo/constant.dart';
-import 'package:app_fingo/models/gastos_model.dart';
-import 'package:app_fingo/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:intl/intl.dart';
 import '../../models/api_response.dart';
+import '../../models/gastos_model.dart';
 import '../../services/user_service.dart';
 import '../welcome.dart';
+import '../dashboard.dart';
 
 class Balanco extends StatefulWidget {
   @override
@@ -15,31 +15,39 @@ class Balanco extends StatefulWidget {
 }
 
 class _BalancoState extends State<Balanco> {
-  List<Gastos> getgastos = [];
-  bool loading = true;
-  double totalGastos = 0.0;
-   final MoneyMaskedTextController moneyController = MoneyMaskedTextController(
+  
+  final MoneyMaskedTextController moneyController = MoneyMaskedTextController(
+    leftSymbol: 'R\$ ',
+    decimalSeparator: ',',
+    thousandSeparator: '.',
+  );
+  final MoneyMaskedTextController amountController = MoneyMaskedTextController(
     leftSymbol: 'R\$ ',
     decimalSeparator: ',',
     thousandSeparator: '.',
   );
 
-   void getAmount() async {
+  List<Map<String, dynamic>> _gastos = [];
+  double totalExpense = 0.0;
+  List<Gastos> getgastos = [];
+  bool loading = true;
+  final NumberFormat currencyFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+
+  void getAmount() async {
     ApiResponse response = await getExpensesDetail();
     if (response.error == null) {
       if (mounted) {
         setState(() {
-          getgastos = response.data as List<Gastos>;
+          List<Gastos> getgastos = response.data as List<Gastos>;
           loading = false;
 
-          // Calcular o total dos gastos
           if (getgastos.isNotEmpty) {
-            totalGastos = getgastos.fold(0.0, (sum, item) {
-              // Converter amount para double e somar ao total
-              double amount = double.tryParse(item.amount ?? "0") ?? 0.0;
-              return sum + amount;
-            });
-            moneyController.updateValue(totalGastos);
+            Gastos firstItem = getgastos[0];
+            _gastos = List<Map<String, dynamic>>.from(firstItem.gastos ?? []);
+            totalExpense = _gastos.fold(0.0, (sum, item) => sum + (item['amount'] ?? 0.0));
+          } else {
+            _gastos = [];
+            totalExpense = 0.0;
           }
         });
       }
@@ -103,8 +111,7 @@ class _BalancoState extends State<Balanco> {
         ),
       ),
       body: SingleChildScrollView(
-        padding:
-            EdgeInsets.symmetric(horizontal: width * 0.1, vertical: height * 0.05),
+        padding: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: height * 0.05),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -132,12 +139,14 @@ class _BalancoState extends State<Balanco> {
               ),
             ),
             SizedBox(height: height * 0.04),
-             _buildInfoCard(width, 'Gastos', moneyController.text, Colors.grey[200]!),
+            _buildInfoCard(width, 'Gastos', currencyFormat.format(totalExpense), Colors.grey[200]!),
             SizedBox(height: height * 0.02),
             _buildInfoCard(width, 'Lucro', 'R\$359', Colors.grey[200]!),
             SizedBox(height: height * 0.04),
-            _buildExpenseItem(width, 'Internet', 'R\$100'),
-            _buildExpenseItem(width, 'Internet', 'R\$100'),
+            // Construindo a lista de gastos
+            ..._gastos.map((gasto) {
+              return _buildExpenseItem(width, gasto);
+            }).toList(),
             SizedBox(height: height * 0.04),
             Center(
               child: ElevatedButton(
@@ -199,7 +208,7 @@ class _BalancoState extends State<Balanco> {
     );
   }
 
-  Widget _buildExpenseItem(double width, String name, String amount) {
+  Widget _buildExpenseItem(double width, Map<String, dynamic> gasto) {
     return Container(
       width: width,
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -212,14 +221,14 @@ class _BalancoState extends State<Balanco> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            name,
+            gasto['name'] ?? 'Desconhecido',
             style: GoogleFonts.poppins(
               color: Colors.black,
               fontSize: 18,
             ),
           ),
           Text(
-            amount,
+           '${currencyFormat.format(gasto['amount'])}',
             style: GoogleFonts.poppins(
               color: Color(0xFFFF0000),
               fontSize: 16,

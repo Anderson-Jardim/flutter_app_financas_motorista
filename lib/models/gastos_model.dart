@@ -20,9 +20,6 @@ class Gastos{
       id: json['id'],
       amount: json['amount'],
       gastos: json['gastos'],
-      /* user: User(
-        id: json['user']['id'],
-      ) */
     );
   }
 }

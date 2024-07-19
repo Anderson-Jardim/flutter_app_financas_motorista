@@ -15,7 +15,6 @@ import 'infoone.dart';
 import 'meslucros.dart';
 
 class Register extends StatefulWidget {
-
   @override
   _RegisterState createState() => _RegisterState();
 }
@@ -25,49 +24,50 @@ class _RegisterState extends State<Register> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool loading = false;
   bool loadingupdate = true;
-  TextEditingController
-    nameController = TextEditingController(), 
-    usernameController = TextEditingController(), 
-    contactController  = TextEditingController(),
-    passwordController = TextEditingController(),
-    passwordConfirmController = TextEditingController();
+  TextEditingController nameController = TextEditingController(),
+      usernameController = TextEditingController(),
+      contactController = TextEditingController(),
+      passwordController = TextEditingController(),
+      passwordConfirmController = TextEditingController();
 
-
-  void _registerUser () async {
+  void _registerUser() async {
     ApiResponse response = await register(nameController.text, usernameController.text, contactController.text, passwordController.text);
-    if(response.error == null) {
+    if (response.error == null) {
       _saveAndRedirectToHome(response.data as User);
-    } 
-    else {
-      setState(() {
-        loading = !loading;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${response.error}')
-      ));
+    } else {
+      if (mounted) {
+        setState(() {
+          loading = !loading;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.error}')
+        ));
+      }
     }
   }
 
   void _updateUser() async {
-    ApiResponse response = await updateUser(nameController.text, usernameController.text, contactController.text, passwordController.text );
-    setState(() {
+    ApiResponse response = await updateUser(nameController.text, usernameController.text, contactController.text, passwordController.text);
+    if (mounted) {
+      setState(() {
         loadingupdate = false;
       });
-      if(response.error == null){
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>GastosPage()), (route) => false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${response.data}')
-      ));
-    }
-    else if(response.error == unauthorized){
-      logout().then((value) => {
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Login()), (route) => false)
-      });
-    }
-    else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${response.error}')
-      ));
+      if (response.error == null) {
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => GastosPage()), (route) => false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.data}')
+        ));
+      } else if (response.error == unauthorized) {
+        logout().then((value) {
+          if (mounted) {
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Login()), (route) => false);
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.error}')
+        ));
+      }
     }
   }
 
@@ -76,45 +76,43 @@ class _RegisterState extends State<Register> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>GastosPage()), (route) => false);
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => GastosPage()), (route) => false);
+    }
   }
-
-
-  
-
-
-
 
   void getUser() async {
     ApiResponse response = await getUserDetail();
-    if(response.error == null) {
-      setState(() {
-        user = response.data as User;
-        loading = false;
-        nameController.text = user!.name ?? '';
-        usernameController.text = user!.username ?? '';
-        contactController.text = user!.contact ?? '';
+    if (response.error == null) {
+      if (mounted) {
+        setState(() {
+          user = response.data as User;
+          loading = false;
+          nameController.text = user!.name ?? '';
+          usernameController.text = user!.username ?? '';
+          contactController.text = user!.contact ?? '';
+        });
+      }
+    } else if (response.error == unauthorized) {
+      logout().then((value) {
+        if (mounted) {
+         // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+        }
       });
-    }
-    else if(response.error == unauthorized){
-      logout().then((value) => {
-        //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false)
-      });
-    }
-    else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${response.error}')
-      ));
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.error}')
+        ));
+      }
     }
   }
 
-
- @override
+  @override
   void initState() {
     getUser();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -129,165 +127,153 @@ class _RegisterState extends State<Register> {
           child: Form(
             key: formKey,
             child: Column(
-               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: height * 0.06),               
-                     Container(
+                SizedBox(height: height * 0.06),
+                Container(
                   width: width * 0.8,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RichText(
-            text: TextSpan(
-              style: GoogleFonts.poppins(
-                fontSize: 45,
-                height: 1,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-              ),
-              children: <TextSpan>[
-                TextSpan(text: 'Precisamos\n'),
-                TextSpan(
-                  text: 'conhecer\nvocê.',
-                  style: TextStyle(color: Color(0xFF00ff75)),
-                ),
-                
-              ],
-            ),
-            textAlign: TextAlign.left,
-          ),
+                        text: TextSpan(
+                          style: GoogleFonts.poppins(
+                            fontSize: 45,
+                            height: 1,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(text: 'Precisamos\n'),
+                            TextSpan(
+                              text: 'conhecer\nvocê.',
+                              style: TextStyle(color: Color(0xFF00ff75)),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
                     ],
                   ),
                 ),
                 SizedBox(height: height * 0.05),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-
                   child: Column(
                     children: [
-
                       TextFormField(
-                        style: GoogleFonts.poppins(  
-                        fontWeight: FontWeight.w500,
-                        textStyle: TextStyle(color:Colors.white)
-                 ), 
-                      controller: contactController,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Insira um número ou e-mail válido';
-        }
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          textStyle: TextStyle(color: Colors.white),
+                        ),
+                        controller: contactController,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Insira um número ou e-mail válido';
+                          }
 
-        // Regular expression for phone number (10 to 15 digits)
-        final phoneRegex = RegExp(r'^[0-9]{10,15}$');
+                          // Regular expression for phone number (10 to 15 digits)
+                          final phoneRegex = RegExp(r'^[0-9]{10,15}$');
 
-        // Check if the value is a valid email
-        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value) && !phoneRegex.hasMatch(value)) {
-          return 'Insira um número ou e-mail válido';
-        }
-        return null;
-      },
-                      
-                      decoration: kInputDecoration('Número ou e-mail')
-                    ),
-                    SizedBox(height: height * 0.04),
-
+                          // Check if the value is a valid email
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value) && !phoneRegex.hasMatch(value)) {
+                            return 'Insira um número ou e-mail válido';
+                          }
+                          return null;
+                        },
+                        decoration: kInputDecoration('Número ou e-mail'),
+                      ),
+                      SizedBox(height: height * 0.04),
                       TextFormField(
-                         style: GoogleFonts.poppins(  
-                        fontWeight: FontWeight.w500,
-                        textStyle: TextStyle(color:Colors.white)
-                 ), 
-                      controller: nameController,
-                      validator: (val) => val!.isEmpty ? 'Nome inválido' : null,
-                      decoration: kInputDecoration('Nome completo')
-                    ),
-                    SizedBox(height: height * 0.04),
-
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          textStyle: TextStyle(color: Colors.white),
+                        ),
+                        controller: nameController,
+                        validator: (val) => val!.isEmpty ? 'Nome inválido' : null,
+                        decoration: kInputDecoration('Nome completo'),
+                      ),
+                      SizedBox(height: height * 0.04),
                       TextFormField(
-                         style: GoogleFonts.poppins(  
-                        fontWeight: FontWeight.w500,
-                        textStyle: TextStyle(color:Colors.white)
-                 ), 
-                      controller: usernameController,
-                      validator: (val) => val!.isEmpty ? 'Nome de usuário inválido' : null,
-                      decoration: kInputDecoration('Nome de usuário')
-                    ),
-                    SizedBox(height: height * 0.04),
-                    
-                    
-                    TextFormField(
-                       style: GoogleFonts.poppins(  
-                        fontWeight: FontWeight.w500,
-                        textStyle: TextStyle(color:Colors.white)
-                 ), 
-                      controller: passwordController,
-                      obscureText: true,
-                      validator: (val) => val!.length < 6 ? 'Senha inferior a 6 digitos' : null,
-                      decoration: kInputDecoration('Senha')
-                    ),
-                    SizedBox(height: height * 0.04),
-                    TextFormField(
-                       style: GoogleFonts.poppins(  
-                        fontWeight: FontWeight.w500,
-                        textStyle: TextStyle(color:Colors.white)
-                 ), 
-                      controller: passwordConfirmController,
-                      obscureText: true,
-                      validator: (val) => val != passwordController.text ? 'A senha não é a mesma' : null,
-                      decoration: kInputDecoration('Confirmar senha')
-                    ),
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          textStyle: TextStyle(color: Colors.white),
+                        ),
+                        controller: usernameController,
+                        validator: (val) => val!.isEmpty ? 'Nome de usuário inválido' : null,
+                        decoration: kInputDecoration('Nome de usuário'),
+                      ),
+                      SizedBox(height: height * 0.04),
+                      TextFormField(
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          textStyle: TextStyle(color: Colors.white),
+                        ),
+                        controller: passwordController,
+                        obscureText: true,
+                        validator: (val) => val!.length < 6 ? 'Senha inferior a 6 digitos' : null,
+                        decoration: kInputDecoration('Senha'),
+                      ),
+                      SizedBox(height: height * 0.04),
+                      TextFormField(
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          textStyle: TextStyle(color: Colors.white),
+                        ),
+                        controller: passwordConfirmController,
+                        obscureText: true,
+                        validator: (val) => val != passwordController.text ? 'A senha não é a mesma' : null,
+                        decoration: kInputDecoration('Confirmar senha'),
+                      ),
                     ],
                   ),
                 ),
-            
                 SizedBox(height: height * 0.05),
-                    /* loading ? 
-                      Center(child: CircularProgressIndicator())
-                    : */ kTextButton('Próximo', () async {
-                    if (formKey.currentState!.validate()) {
-                      SharedPreferences pref = await SharedPreferences.getInstance();
-                      bool isAuthenticated = pref.getString('token') != null;
+                kTextButton('Próximo', () async {
+                  if (formKey.currentState!.validate()) {
+                    SharedPreferences pref = await SharedPreferences.getInstance();
+                    bool isAuthenticated = pref.getString('token') != null;
+                    if (mounted) {
                       setState(() {
                         loading = true;
                       });
-                      if (isAuthenticated) {
-                        _updateUser();
-                      } else {
-                        _registerUser();
-                      }
                     }
-                  },
-                      EdgeInsets.symmetric(
-                      vertical: height * 0.02,
-                      horizontal: width * 0.30
-                      ),
-                      height * 0.025,
-                      
-                    ),
-                    SizedBox(height: height * 0.02),
-
-                kButtonAnterior('Anterior', (){
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false);
-
-                },  EdgeInsets.symmetric(
-                      vertical: height * 0.02,
-                      horizontal: width * 0.30
-                      ),
-                      height * 0.025,
-                      ),
-                  SizedBox(height: height * 0.05),
-             
-
+                    if (isAuthenticated) {
+                      _updateUser();
+                    } else {
+                      _registerUser();
+                    }
+                  }
+                },
+                  EdgeInsets.symmetric(
+                    vertical: height * 0.02,
+                    horizontal: width * 0.30,
+                  ),
+                  height * 0.025,
+                ),
+                SizedBox(height: height * 0.02),
+                kButtonAnterior('Anterior', () {
+                  if (mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+                  }
+                },
+                  EdgeInsets.symmetric(
+                    vertical: height * 0.02,
+                    horizontal: width * 0.30,
+                  ),
+                  height * 0.025,
+                ),
+                SizedBox(height: height * 0.05),
                 Text(
-                        textAlign: TextAlign.center,
-                           "Ao se cadastrar, você concorda com nossos\nTermos, Política de privacidade e política de Cookies",
-                        style:   GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 12
-                        )
-                      ),
-                SizedBox(height: height * 0.01), // Add some space at the bottom              
+                  textAlign: TextAlign.center,
+                  "Ao se cadastrar, você concorda com nossos\nTermos, Política de privacidade e política de Cookies",
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                ),
+                SizedBox(height: height * 0.01),
               ],
             ),
           ),
@@ -296,4 +282,3 @@ class _RegisterState extends State<Register> {
     );
   }
 }
-

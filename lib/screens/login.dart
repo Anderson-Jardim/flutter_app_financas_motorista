@@ -58,7 +58,7 @@ class _LoginState extends State<Login> {
         elevation: 0,
         leading: IconButton(
           
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false);
           },
@@ -86,12 +86,12 @@ class _LoginState extends State<Login> {
 
                       Container(        
                         alignment: Alignment.center,          
-                        width: 300,
+                        width: width * 0.9,
                         height: 106,  
                         child: Text(                      
                         'Bem vindo.',
                         style:  GoogleFonts.inter(
-                          fontSize: constraints.maxWidth * 0.130,
+                          fontSize: constraints.maxWidth * 0.143,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),                 
@@ -149,28 +149,17 @@ class _LoginState extends State<Login> {
                                ),
                               )
                         ),
-                        SizedBox(height: 80,),
+
+                        SizedBox(height: height * 0.16),
+
                         loading? Center(child: CircularProgressIndicator(),)
                         :
-                        /* kTextButton('Entrar', () {
-                          if (formkey.currentState!.validate()){
-                              setState(() {
-                                loading = true;
-                                _loginUser();
-                              });
-                            }
-                        },
-                        EdgeInsets.symmetric(
-                                  vertical: height * 0.02,
-                                  horizontal: width * 0.30
-                                  ),height * 0.025,
-                        ),
- */
-                        ElevatedButton(
+
+                         ElevatedButton(
                         onPressed: () {
                           if (formkey.currentState!.validate()){
                               setState(() {
-                                loading = true;
+                                 loading = true; 
                                 _loginUser();
                               });
                             }
@@ -196,8 +185,8 @@ class _LoginState extends State<Login> {
                             fontWeight: FontWeight.w500,
                           )
                         ),
-                      ),
-                        SizedBox(height: 10,),
+                      ), 
+                        SizedBox(height: 15,),
                        
                       ],
                     ),
@@ -232,7 +221,7 @@ class _LoginState extends State<Login> {
                             ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: height * 0.05),
                       
                     
                     ],

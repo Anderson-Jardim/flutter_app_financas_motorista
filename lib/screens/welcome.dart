@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [                 
-                      SizedBox(height: 40),
+                     SizedBox(height: height * 0.09),
 
                     Container(
                       width: 300,
@@ -54,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                          ), 
                       ),
                       ),
-                       SizedBox(height: 160), 
+                       SizedBox(height: height * 0.26),
 
                       ElevatedButton(
                         onPressed: () {
@@ -108,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                           )
                         ),
                       ),
-                    
+                    SizedBox(height: height * 0.05),
                     ],
                   ),
                 ),

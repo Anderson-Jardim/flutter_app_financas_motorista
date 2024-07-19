@@ -46,8 +46,8 @@ class _GastosPageState extends State<GastosPage> {
     final url = Uri.parse(expensesURL);
     String token = await getToken(); // obtenha o token conforme necessário
 
-  try{
-    // Verifique se o registro já existe
+    try {
+      // Verifique se o registro já existe
       final checkResponse = await http.get(
         url,
         headers: <String, String>{
@@ -56,10 +56,10 @@ class _GastosPageState extends State<GastosPage> {
         },
       );
 
-    if(checkResponse.statusCode == 200){
-      final List<dynamic> existingData = json.decode(checkResponse.body);
-      if (existingData.isNotEmpty) {
-        // Atualize o registro existente
+      if (checkResponse.statusCode == 200) {
+        final List<dynamic> existingData = json.decode(checkResponse.body);
+        if (existingData.isNotEmpty) {
+          // Atualize o registro existente
           final updateUrl = Uri.parse('$expensesURL/${existingData[0]['id']}');
           final updateResponse = await http.put(
             updateUrl,
@@ -70,18 +70,25 @@ class _GastosPageState extends State<GastosPage> {
             body: json.encode({'gastos': _gastos}),
           );
           if (updateResponse.statusCode == 200) {
-           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Gastos atualizado com sucesso')),
-            );
+            if (mounted) {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Infoone()),
+                (route) => false,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Gastos atualizado com sucesso')),
+              );
+            }
           } else {
             print('Falha ao atualizar Gastos: ${updateResponse.statusCode}');
             print('Resposta do servidor: ${updateResponse.body}');
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Falha ao atualizar Gastos: ${updateResponse.statusCode}')),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Falha ao atualizar Gastos: ${updateResponse.statusCode}')),
+              );
+            }
           }
-      }else {
+        } else {
           // Crie um novo registro
           final createResponse = await http.post(
             url,
@@ -93,71 +100,42 @@ class _GastosPageState extends State<GastosPage> {
           );
 
           if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Gastos adicionado com sucesso')),
-            );
+            if (mounted) {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Infoone()),
+                (route) => false,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Gastos adicionado com sucesso')),
+              );
+            }
           } else {
             print('Falha ao adicionar Gastos: ${createResponse.statusCode}');
             print('Resposta do servidor: ${createResponse.body}');
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Falha ao adicionar Gastos: ${createResponse.statusCode}')),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Falha ao adicionar Gastos: ${createResponse.statusCode}')),
+              );
+            }
           }
         }
-    }else {
+      } else {
         print('Falha ao verificar Gastos: ${checkResponse.statusCode}');
         print('Resposta do servidor: ${checkResponse.body}');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Falha ao verificar Gastos: ${checkResponse.statusCode}')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Erro ao fazer requisição: $e');
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Falha ao verificar Gastos: ${checkResponse.statusCode}')),
+          SnackBar(content: Text('Erro ao fazer requisição')),
         );
       }
-
-  } catch (e){
-    print('Erro ao fazer requisição: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao fazer requisição')),
-      );
-  }
-
-
-
-  /*   final response = _isSubmitted
-        ? await http.put(
-            Uri.parse(url),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: json.encode({'gastos': _gastos}),
-          )
-        : await http.post(
-            Uri.parse(url),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: json.encode({'gastos': _gastos}),
-          );
-
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Infoone()), (route) => false);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gastos enviados com sucesso!')));
-      if (!_isSubmitted) {
-        final responseData = json.decode(response.body);
-        print('Response data: $responseData'); // Adicionar print de depuração
-        setState(() {
-          _isSubmitted = true;
-          _expenseId = responseData['id'];
-        });
-      }
-    } else {
-      print('Erro ao enviar gastos: ${response.statusCode}'); // Adicionar print de depuração
-      print('Response body: ${response.body}'); // Adicionar print de depuração
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao enviar gastos.')));
-    } */
+    }
   }
 
   void _addGasto() {
@@ -187,48 +165,56 @@ class _GastosPageState extends State<GastosPage> {
 
 
 
-void getExpenses() async {
-  ApiResponse response = await getExpensesDetail();
-  if (response.error == null) {
-    setState(() {
-      List<Gastos> getgastos = response.data as List<Gastos>;
-      loading = false;
+ void getExpenses() async {
+    ApiResponse response = await getExpensesDetail();
+    if (response.error == null) {
+      if (mounted) {
+        setState(() {
+          List<Gastos> getgastos = response.data as List<Gastos>;
+          loading = false;
 
-      if(getgastos.isNotEmpty){
-        Gastos firstItem = getgastos[0];
-       _gastos = List<Map<String, dynamic>>.from(firstItem.gastos ?? []); 
-         totalExpense = firstItem.amount != null ? double.tryParse(firstItem.amount.toString()) ?? 0.0 : 0.0;
-      }else {
-        _gastos = [];
-        totalExpense = 0.0;
+          if (getgastos.isNotEmpty) {
+            Gastos firstItem = getgastos[0];
+            _gastos = List<Map<String, dynamic>>.from(firstItem.gastos ?? []);
+            totalExpense = firstItem.amount != null ? double.tryParse(firstItem.amount.toString()) ?? 0.0 : 0.0;
+          } else {
+            _gastos = [];
+            totalExpense = 0.0;
+          }
+        });
+      }
+    } else if (response.error == unauthorized) {
+      logout().then((value) {
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+            (route) => false,
+          );
+        }
+      });
+    } else {
+      // Detalhe o erro
+      String errorMessage = 'Erro ao obter despesas: ${response.error}';
+      if (response.errorDetail != null) {
+        errorMessage += '\nDetalhes do erro: ${response.errorDetail}';
       }
 
-    });
-  } else if (response.error == unauthorized) {
-    logout().then((value) => {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false)
-    });
-  } else {
-    // Detalhe o erro
-    String errorMessage = 'Erro ao obter despesas: ${response.error}';
-    if (response.errorDetail != null) {
-      errorMessage += '\nDetalhes do erro: ${response.errorDetail}';
-    }
+      // Log do erro detalhado (somente no console do desenvolvedor)
+      print('Erro detalhado ao obter despesas: ${response.error}');
+      if (response.errorDetail != null) {
+        print('Detalhes do erro: ${response.errorDetail}');
+      }
+      if (response.statusCode != null) {
+        print('Código de status HTTP: ${response.statusCode}');
+      }
 
-    // Log do erro detalhado (somente no console do desenvolvedor)
-    print('Erro detalhado ao obter despesas: ${response.error}');
-    if (response.errorDetail != null) {
-      print('Detalhes do erro: ${response.errorDetail}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Erro ao obter despesas: ${response.error}'),
+        ));
+      }
     }
-    if (response.statusCode != null) {
-      print('Código de status HTTP: ${response.statusCode}');
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Erro ao obter despesas: ${response.error}'),
-    ));
   }
-}
 
 
 @override
@@ -439,30 +425,8 @@ void getExpenses() async {
                 ),
               ),
           SizedBox(height: height * 0.05,),         
-               /*  TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Nome do Gasto'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira o nome do gasto';
-                    }
-                    return null;
-                  },
-                ), */
-                /* TextFormField(
-                  controller: _amountController,
-                  decoration: InputDecoration(labelText: 'Valor do Gasto'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira o valor do gasto';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Por favor, insira um valor válido';
-                    }
-                    return null;
-                  },
-                ), */
+               
+               
 
               Container(
                 child: Center(
@@ -520,21 +484,7 @@ void getExpenses() async {
              
                   SizedBox(height: height * 0.05),
              
-               /*  SizedBox(height: 20),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: _gastos.length,
-                    itemBuilder: (context, index) {
-                      final gasto = _gastos[index];
-                      return ListTile(
-                        title: Text(gasto['name']),
-                        subtitle: Text(
-                            'R\$ ${gasto['amount'].toStringAsFixed(2)}'),
-                      );
-                    },
-                  ),
-                ), */
-                
+             
                  
                 
               ],

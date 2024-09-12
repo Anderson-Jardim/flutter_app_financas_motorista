@@ -1,0 +1,6 @@
+<!-- res/values/strings.xml -->
+<resources>
+    <string name="app_name">app_fingo</string>
+    <string name="accessibility_service_description">Accessibility Service for Uber Screen Reader</string>
+    <!-- Adicione outras strings aqui -->
+</resources>

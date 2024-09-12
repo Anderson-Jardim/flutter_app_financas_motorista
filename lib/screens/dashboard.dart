@@ -1,5 +1,6 @@
 import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/balanco/meu_balanco.dart';
+import 'package:app_fingo/screens/calculadora/info_calc.dart';
 import 'package:app_fingo/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -165,7 +166,9 @@ class _DashboardState extends State<Dashboard> {
 
                         }),
                         DashboardButton(title: 'Calculadora', onTap: (){
-
+                           Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => CalculadoraLucroScreen()), 
+                          (route) => false);
                         },),
                       ],
                     ),

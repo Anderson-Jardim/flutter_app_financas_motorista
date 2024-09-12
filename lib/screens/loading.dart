@@ -44,6 +44,7 @@ class _LoadingState extends State<Loading> {
     _loadUserInfo();
     super.initState();
   }
+ 
 
   @override
   Widget build(BuildContext context) {

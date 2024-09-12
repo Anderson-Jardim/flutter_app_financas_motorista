@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/custom_card_background"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/text_view_tipo_corrida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:text="Corrida Diamante"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_view_distancia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:text="13km/R$2,75"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

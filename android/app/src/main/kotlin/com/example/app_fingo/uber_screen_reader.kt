@@ -15,11 +15,17 @@ import android.widget.TextView
 import okhttp3.*
 import org.json.JSONArray
 import java.io.IOException
+import androidx.core.content.ContextCompat
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+
 
 class MyAccessibilityService : AccessibilityService() {
     private val client = OkHttpClient()
     private var lastCapturedValue: String? = null
     private var totalDistance = 0.0
+    private var distanceValue = 0.0
+    private var travelValue = 0.0
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event != null && event.packageName == "com.ubercab.driver") {
@@ -50,8 +56,17 @@ class MyAccessibilityService : AccessibilityService() {
         if (text != null && text.contains("km")) {
             val distance = extractDistanceValue(text)
             if (distance != null) {
-                totalDistance += distance
-                Log.d("AccessibilityService", "Distância capturada: $distance km, Total: $totalDistance km")
+                if (text.contains("distância")) {
+                    // Se o texto conter "distância", capturar o valor correspondente
+                    distanceValue = distance
+                } else if (text.contains("Viagem")) {
+                    // Se o texto conter "Viagem", capturar o valor correspondente
+                    travelValue = distance
+                }
+
+                // Soma das distâncias capturadas
+                totalDistance = distanceValue + travelValue
+                Log.d("AccessibilityService", "Distância total capturada: $totalDistance km")
             }
         }
     }
@@ -148,8 +163,7 @@ private fun extractDistanceValue(text: String): Double? {
                                                     val totalCusto = (monthlyExpenses / diasTrabalhados) / qtdCorridas
                                                     val totalLucro = decimalValue - totalCusto
                                                     val valorKm = (totalLucro / decimalValue) * 100
-                                                    /* val valorKmResult = valorKm * 100 */
-                                                     /* val tipoCorrida = (totalLucro / decimalValue) * 100  */
+                                                    val valorPorKm = totalDistance / totalLucro
 
                                                     val corridaTipo: String = when {
                                                         valorKm <= corridaBronze -> "Corrida Bronze"
@@ -159,7 +173,7 @@ private fun extractDistanceValue(text: String): Double? {
 
                                                     Handler(Looper.getMainLooper()).post {
     
-                                                        showCustomCard( corridaTipo, /* totalDistance */ valorKm)
+                                                        showCustomCard( corridaTipo, valorPorKm)
                                                     }
                                                 } else {
                                                     Log.e("API_ERROR", "Failed to fetch classcorridas data: ${response.message}")
@@ -186,30 +200,46 @@ private fun extractDistanceValue(text: String): Double? {
 
     override fun onInterrupt() {}
 
-   private fun showCustomCard( corridaTipo: String,/*totalDistance: Double, valorKm: Double */ valorKm: Double) {
+   private fun showCustomCard(corridaTipo: String, valorPorKm: Double) {
     try {
         val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val layoutParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            850,
+            350,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
-        layoutParams.gravity = Gravity.TOP /* or Gravity.CENTER */
+        layoutParams.gravity = Gravity.TOP
         layoutParams.x = 0
         layoutParams.y = 0
 
-        /* val view = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null) */
         val view = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null)
-        val textViewTipoCorrida: TextView = view.findViewById(R.id.text_view_tipo_corrida) 
         val textViewDistancia: TextView = view.findViewById(R.id.text_view_distancia)
+        val textViewGanhoKM: TextView = view.findViewById(R.id.text_view_ganhoKM) 
+        val imageViewCorrida = view.findViewById<ImageView>(R.id.image_view_corrida)
+
+        
 
         // Definir o texto conforme os valores capturados
-         textViewTipoCorrida.text = corridaTipo 
-        textViewDistancia.text = /* "Distância total: ${"%.2f".format(totalDistance)} km / R$ ${"%.2f".format(valorKm)}" */ "Total Lucro: R$ ${"%.2f".format(valorKm)}"
+        imageViewCorrida
+        textViewGanhoKM.text
+        textViewDistancia.text = "${"%.2f".format(totalDistance)} km/R$ ${"%.2f".format(valorPorKm)}"
+        
+     val imageUrl =   when (corridaTipo) {
+    "Corrida Bronze" -> R.drawable.bandeirabronze
+    "Corrida Ouro" -> R.drawable.bandeiraouro
+    else-> R.drawable.bandeiradiamante
+}
 
-        windowManager.addView(view, layoutParams)
+        Glide.with(this) // ou 'context' dependendo do escopo
+    .load(imageUrl) // URL ou caminho da imagem local
+    .into(imageViewCorrida)
+
+        val customGreen = ContextCompat.getColor(this, R.color.custom_green)
+        textViewDistancia.setTextColor(customGreen)
+       
+       windowManager.addView(view, layoutParams)
 
         // Remover a notificação após 4 segundos
         Handler(Looper.getMainLooper()).postDelayed({

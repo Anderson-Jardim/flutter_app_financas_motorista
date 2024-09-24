@@ -10,6 +10,7 @@ const expensesURL = baseURL + '/expenses';
 const logoutURL = baseURL + '/logout';
 const InfooneURL = baseURL + '/infoone';
 const meslucrosURL = baseURL + '/meslucros';
+const lucroCorridaURL = baseURL + '/lercorrida';
 const userURL = baseURL + '/user';
 const postsURL = baseURL + '/posts';
 const commentsURL = baseURL + '/comments';

@@ -27,6 +27,7 @@ class MyAccessibilityService : AccessibilityService() {
     private var distanceValue = 0.0
     private var travelValue = 0.0
 
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event != null && event.packageName == "com.ubercab.driver") {
             val rootNode = event.source ?: return
@@ -40,10 +41,34 @@ class MyAccessibilityService : AccessibilityService() {
     private fun traverseNode(node: AccessibilityNodeInfo?) {
     if (node == null) return
 
+    if (node.className == "android.widget.Button") {
+        val buttonText = node.text?.toString()
+
+        // Verifica se o botão é "Selecionar" ou "Aceitar"
+        if (buttonText != null && (buttonText.contains("Selecionar") || buttonText.contains("Aceitar"))) {
+            Log.d("AccessibilityService", "Botão $buttonText identificado")
+
+            // Percorre os elementos visíveis e captura o valor monetário e a distância
+            val rootNode = node.parent ?: return
+            for (i in 0 until rootNode.childCount) {
+                val child = rootNode.getChild(i)
+                captureValues(child)
+            }
+        }
+    }
+
+    for (i in 0 until node.childCount) {
+        traverseNode(node.getChild(i))
+    }
+}
+
+private fun captureValues(node: AccessibilityNodeInfo?) {
+    if (node == null) return
+
     if (node.className == "android.widget.TextView") {
         val text = node.text?.toString()
 
-        // Capturando o valor monetário (R$)
+        // Captura o valor monetário (R$)
         if (text != null && text.contains("R$")) {
             lastCapturedValue = extractMonetaryValue(text)
             if (lastCapturedValue != null) {
@@ -52,27 +77,27 @@ class MyAccessibilityService : AccessibilityService() {
             }
         }
 
-        // Capturando a distância em km
+        // Captura a distância em km
         if (text != null && text.contains("km")) {
             val distance = extractDistanceValue(text)
             if (distance != null) {
                 if (text.contains("distância")) {
-                    // Se o texto conter "distância", capturar o valor correspondente
                     distanceValue = distance
                 } else if (text.contains("Viagem")) {
-                    // Se o texto conter "Viagem", capturar o valor correspondente
                     travelValue = distance
                 }
 
-                // Soma das distâncias capturadas
                 totalDistance = distanceValue + travelValue
                 Log.d("AccessibilityService", "Distância total capturada: $totalDistance km")
+
+             sendDataToApi(lastCapturedValue!!)
+                
             }
         }
     }
 
     for (i in 0 until node.childCount) {
-        traverseNode(node.getChild(i))
+        captureValues(node.getChild(i))
     }
 }
 
@@ -89,114 +114,152 @@ private fun extractDistanceValue(text: String): Double? {
         return matchResult?.groups?.get(1)?.value
     }
 
+
+
+
+
+
     private fun sendDataToApi(monetaryValue: String) {
-        val decimalValue = monetaryValue.replace(".", "").replace(",", ".").toDoubleOrNull()
 
-        if (decimalValue != null) {
-            val sharedPreferences = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-            val token = sharedPreferences.getString("flutter.token", null)
+    val decimalValue = monetaryValue.replace(".", "").replace(",", ".").toDoubleOrNull()
 
-            if (token != null) {
-                val urlGastosMensais = "http://192.168.0.118:8000/api/expenses"
-                val urlInfoones = "http://192.168.0.118:8000/api/infoone"
-                val urlClasscorridas = "http://192.168.0.118:8000/api/classcorridas"
+    if (decimalValue != null) {
+        val sharedPreferences = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("flutter.token", null)
 
-                val requestGastos = Request.Builder()
-                    .url(urlGastosMensais)
-                    .addHeader("Authorization", "Bearer $token")
-                    .build()
+        if (token != null) {
+            val urlGastosMensais = "http://192.168.0.118:8000/api/expenses"
+            val urlInfoones = "http://192.168.0.118:8000/api/infoone"
+            val urlClasscorridas = "http://192.168.0.118:8000/api/classcorridas"
+            val urlApi = "http://192.168.0.118:8000/api/lercorrida"
 
-                client.newCall(requestGastos).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        Log.e("API_ERROR", "Failed to fetch monthly expenses: $e")
-                    }
+            val requestGastos = Request.Builder()
+                .url(urlGastosMensais)
+                .addHeader("Authorization", "Bearer $token")
+                .build()
 
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-                            val responseData = response.body?.string()
-                            val jsonArray = JSONArray(responseData)
-                            var monthlyExpenses = 0.0
+            client.newCall(requestGastos).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.e("API_ERROR", "Failed to fetch monthly expenses: $e")
+                }
 
-                            for (i in 0 until jsonArray.length()) {
-                                val item = jsonArray.getJSONObject(i)
-                                monthlyExpenses += item.getDouble("amount")
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
+                        val responseData = response.body?.string()
+                        val jsonArray = JSONArray(responseData)
+                        var monthlyExpenses = 0.0
+
+                        for (i in 0 until jsonArray.length()) {
+                            val item = jsonArray.getJSONObject(i)
+                            monthlyExpenses += item.getDouble("amount")
+                        }
+
+                        val requestInfoones = Request.Builder()
+                            .url(urlInfoones)
+                            .addHeader("Authorization", "Bearer $token")
+                            .build()
+
+                        client.newCall(requestInfoones).enqueue(object : Callback {
+                            override fun onFailure(call: Call, e: IOException) {
+                                Log.e("API_ERROR", "Failed to fetch infoones data: $e")
                             }
 
-                            val requestInfoones = Request.Builder()
-                                .url(urlInfoones)
-                                .addHeader("Authorization", "Bearer $token")
-                                .build()
+                            override fun onResponse(call: Call, response: Response) {
+                                if (response.isSuccessful) {
+                                    val infoonesData = response.body?.string()
+                                    val infoonesArray = JSONArray(infoonesData)
+                                    val infoonesItem = infoonesArray.getJSONObject(0)
+                                    val diasTrabalhados = infoonesItem.getInt("dias_trab")
+                                    val qtdCorridas = infoonesItem.getInt("qtd_corridas")
 
-                            client.newCall(requestInfoones).enqueue(object : Callback {
-                                override fun onFailure(call: Call, e: IOException) {
-                                    Log.e("API_ERROR", "Failed to fetch infoones data: $e")
-                                }
+                                    val requestClasscorridas = Request.Builder()
+                                        .url(urlClasscorridas)
+                                        .addHeader("Authorization", "Bearer $token")
+                                        .build()
 
-                                override fun onResponse(call: Call, response: Response) {
-                                    if (response.isSuccessful) {
-                                        val infoonesData = response.body?.string()
-                                        val infoonesArray = JSONArray(infoonesData)
-                                        val infoonesItem = infoonesArray.getJSONObject(0)
-                                        val diasTrabalhados = infoonesItem.getInt("dias_trab")
-                                        val qtdCorridas = infoonesItem.getInt("qtd_corridas")
+                                    client.newCall(requestClasscorridas).enqueue(object : Callback {
+                                        override fun onFailure(call: Call, e: IOException) {
+                                            Log.e("API_ERROR", "Failed to fetch classcorridas data: $e")
+                                        }
 
-                                        val requestClasscorridas = Request.Builder()
-                                            .url(urlClasscorridas)
-                                            .addHeader("Authorization", "Bearer $token")
-                                            .build()
+                                        override fun onResponse(call: Call, response: Response) {
+                                            if (response.isSuccessful) {
+                                                val classcorridasData = response.body?.string()
+                                                val classcorridasArray = JSONArray(classcorridasData)
+                                                val classcorridasItem = classcorridasArray.getJSONObject(0)
 
-                                        client.newCall(requestClasscorridas).enqueue(object : Callback {
-                                            override fun onFailure(call: Call, e: IOException) {
-                                                Log.e("API_ERROR", "Failed to fetch classcorridas data: $e")
-                                            }
+                                                val corridaBronze = classcorridasItem.getInt("corrida_bronze")
+                                                val corridaOuro = classcorridasItem.getInt("corrida_ouro")
+                                                val corridaDiamante = classcorridasItem.getInt("corrida_diamante")
 
-                                            override fun onResponse(call: Call, response: Response) {
-                                                if (response.isSuccessful) {
-                                                    val classcorridasData = response.body?.string()
-                                                    val classcorridasArray = JSONArray(classcorridasData)
-                                                    val classcorridasItem = classcorridasArray.getJSONObject(0)
+                                                val totalCusto = (monthlyExpenses / diasTrabalhados) / qtdCorridas
+                                                val totalLucro = decimalValue - totalCusto
+                                                val valorKm = (totalLucro / decimalValue) * 100
+                                                val valorPorKm = totalDistance / totalLucro
 
-                                                    val corridaBronze = classcorridasItem.getInt("corrida_bronze")
-                                                    val corridaOuro = classcorridasItem.getInt("corrida_ouro")
-                                                    val corridaDiamante = classcorridasItem.getInt("corrida_diamante")
-
-                                                    val totalCusto = (monthlyExpenses / diasTrabalhados) / qtdCorridas
-                                                    val totalLucro = decimalValue - totalCusto
-                                                    val valorKm = (totalLucro / decimalValue) * 100
-                                                    val valorPorKm = totalDistance / totalLucro
-
-                                                    val corridaTipo: String = when {
-                                                        valorKm <= corridaBronze -> "Corrida Bronze"
-                                                        valorKm <= corridaOuro -> "Corrida Ouro"
-                                                        else -> "Corrida Diamante"
-                                                    }
-
-                                                    Handler(Looper.getMainLooper()).post {
-    
-                                                        showCustomCard( corridaTipo, valorPorKm)
-                                                    }
-                                                } else {
-                                                    Log.e("API_ERROR", "Failed to fetch classcorridas data: ${response.message}")
+                                                // Defina o valor de corridaTipo aqui
+                                                val corridaTipo: String = when {
+                                                    valorKm <= corridaBronze -> "Corrida Bronze"
+                                                    valorKm <= corridaOuro -> "Corrida Ouro"
+                                                    else -> "Corrida Diamante"
                                                 }
+
+                                                // Chamando o método que exibe o card com o tipo de corrida e valor por km
+                                                Handler(Looper.getMainLooper()).post {
+                                                    showCustomCard(corridaTipo, valorPorKm)
+                                                }
+
+                                                // Montando o request body para enviar os dados à API
+                                                val requestBody = FormBody.Builder()
+                                                    .add("total_distance", totalDistance.toString())
+                                                    .add("valor", decimalValue.toString())
+                                                    .add("lucro", totalLucro.toString())
+                                                    .add("valor_por_km", valorPorKm.toString())
+                                                    .add("tipo_corrida", corridaTipo)  // Usando corridaTipo aqui
+                                                    .build()
+
+                                                val requestLerCorrida = Request.Builder()
+                                                    .url(urlApi)
+                                                    .addHeader("Authorization", "Bearer $token")
+                                                    .post(requestBody)
+                                                    .build()
+
+                                                client.newCall(requestLerCorrida).enqueue(object : Callback {
+                                                    override fun onFailure(call: Call, e: IOException) {
+                                                        Log.e("API_ERROR", "Failed to send data: $e")
+                                                    }
+
+                                                    override fun onResponse(call: Call, response: Response) {
+                                                        if (response.isSuccessful) {
+                                                            Log.d("API_SUCCESS", "Data sent successfully")
+                                                        } else {
+                                                            Log.e("API_ERROR", "Failed to send data: ${response.message}")
+                                                        }
+                                                    }
+                                                })
+                                            } else {
+                                                Log.e("API_ERROR", "Failed to fetch classcorridas data: ${response.message}")
                                             }
-                                        })
-                                    } else {
-                                        Log.e("API_ERROR", "Failed to fetch infoones data: ${response.message}")
-                                    }
+                                        }
+                                    })
+                                } else {
+                                    Log.e("API_ERROR", "Failed to fetch infoones data: ${response.message}")
                                 }
-                            })
-                        } else {
-                            Log.e("API_ERROR", "Failed to fetch monthly expenses: ${response.message}")
-                        }
+                            }
+                        })
+                    } else {
+                        Log.e("API_ERROR", "Failed to fetch monthly expenses: ${response.message}")
                     }
-                })
-            } else {
-                Log.e("API_ERROR", "Token is null, cannot authenticate")
-            }
+                }
+            })
         } else {
-            Log.e("API_ERROR", "Failed to convert monetary value to decimal")
+            Log.e("API_ERROR", "Token is null, cannot authenticate")
         }
+    } else {
+        Log.e("API_ERROR", "Failed to convert monetary value to decimal")
     }
+}
+
 
     override fun onInterrupt() {}
 
@@ -232,7 +295,7 @@ private fun extractDistanceValue(text: String): Double? {
     else-> R.drawable.bandeiradiamante
 }
 
-        Glide.with(this) // ou 'context' dependendo do escopo
+    Glide.with(this) // ou 'context' dependendo do escopo
     .load(imageUrl) // URL ou caminho da imagem local
     .into(imageViewCorrida)
 

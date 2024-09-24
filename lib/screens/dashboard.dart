@@ -5,6 +5,7 @@ import 'package:app_fingo/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../meta_lucro.dart';
 import '../models/api_response.dart';
 import '../models/user.dart';
 import '../services/user_service.dart';
@@ -157,6 +158,10 @@ class _DashboardState extends State<Dashboard> {
 
                         },),
                         DashboardButton(title: 'Progresso', onTap: (){
+                          
+                          Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => MetaLucroScreen()), 
+                          (route) => false);
 
                         },),
                          DashboardButton(title: 'Meu balanço', onTap: () {

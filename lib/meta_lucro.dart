@@ -96,12 +96,22 @@ class _MetaLucroScreenState extends State<MetaLucroScreen> {
     // Verifique se `lucroMes` e `lucroCorrida` não são nulos e contêm elementos
     if (lucroMes == null || lucroCorrida == null || lucroMes!.isEmpty || lucroCorrida!.isEmpty) {
       return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75)),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Dashboard()),
+                  (route) => false);
+            },
+          ),
+        ),
         backgroundColor: Color(0xFF171f20),
         body: Center(
           child: 
-            CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
-      ),
+           Text("Você ainda não possui lucro", style: TextStyle(color: Colors.white),)
         ),
       );
     }
@@ -112,7 +122,7 @@ class _MetaLucroScreenState extends State<MetaLucroScreen> {
       lucroCorridaModel segundoLucro = lucroCorrida![0];
 
       double lucroDesejado = double.tryParse(primeiroLucro.qtd_mes_lucros ?? '0') ?? 0;
-      double lucroAtual = double.tryParse(segundoLucro.lucro ?? '0') ?? 0;
+      double lucroAtual = double.tryParse(segundoLucro.total_lucro ?? '0') ?? 0;
 
       // Cálculo da porcentagem de progresso
       double porcentagemProgresso = (lucroAtual / lucroDesejado) * 100;

@@ -132,6 +132,7 @@ private fun extractDistanceValue(text: String): Double? {
             val urlInfoones = "http://192.168.0.118:8000/api/infoone"
             val urlClasscorridas = "http://192.168.0.118:8000/api/classcorridas"
             val urlApi = "http://192.168.0.118:8000/api/lercorrida"
+            val urlApilucro = "http://192.168.0.118:8000/api/monthly-earnings"
 
             val requestGastos = Request.Builder()
                 .url(urlGastosMensais)
@@ -237,6 +238,32 @@ private fun extractDistanceValue(text: String): Double? {
                                                         }
                                                     }
                                                 })
+
+                                                val requestBodyLucro = FormBody.Builder()
+                                                    .add("total_lucro", totalLucro.toString())
+                                                    .build()
+
+                                                val requestLucro = Request.Builder()
+                                                    .url(urlApilucro)
+                                                    .addHeader("Authorization", "Bearer $token")
+                                                    .post(requestBodyLucro)
+                                                    .build()
+
+
+                                                    client.newCall(requestLucro).enqueue(object : Callback {
+                                                    override fun onFailure(call: Call, e: IOException) {
+                                                        Log.e("API_ERROR", "Failed to send data: $e")
+                                                    }
+
+                                                    override fun onResponse(call: Call, response: Response) {
+                                                        if (response.isSuccessful) {
+                                                            Log.d("API_SUCCESS", "Data sent successfully")
+                                                        } else {
+                                                            Log.e("API_ERROR", "Failed to send data: ${response.message}")
+                                                        }
+                                                    }
+                                                })
+
                                             } else {
                                                 Log.e("API_ERROR", "Failed to fetch classcorridas data: ${response.message}")
                                             }

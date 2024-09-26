@@ -32,9 +32,11 @@ Future<ApiResponse> getlucroCorridaDetail() async {
       // Em caso de falha, definir o erro na resposta
       apiResponse.error = 'Falha ao carregar dados';
     }
-  } catch (e) {
+  } catch (e, stacktrace) {
     // Em caso de exceção, definir o erro na resposta
     apiResponse.error = 'Erro no servidor. Tente novamente mais tarde.';
+    print('Exceção capturada: $e'); // Log da exceção
+    print('Stacktrace: $stacktrace'); // Log do stacktrace para depuração
   }
   return apiResponse;
 }

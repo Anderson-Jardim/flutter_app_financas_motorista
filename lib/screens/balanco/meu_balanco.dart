@@ -1,4 +1,9 @@
+import 'dart:developer';
+
 import 'package:app_fingo/constant.dart';
+import 'package:app_fingo/models/lucro_corrida_model.dart';
+import 'package:app_fingo/screens/balanco/balanco_saidas.dart';
+import 'package:app_fingo/services/lucro_corrida.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,6 +36,7 @@ class _BalancoState extends State<Balanco> {
   double totalExpense = 0.0;
   List<Gastos> getgastos = [];
   bool loading = true;
+  List<lucroCorridaModel>? lucroCorrida;
   final NumberFormat currencyFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
 
   void getAmount() async {
@@ -84,10 +90,37 @@ class _BalancoState extends State<Balanco> {
     }
   }
 
+    void getLucroCorrida() async {
+    try {
+      ApiResponse response = await getlucroCorridaDetail(); // Chamada para o lucro por corrida
+      if (response.error == null) {
+        setState(() {
+          lucroCorrida = response.data as List<lucroCorridaModel>;
+          loading = false;
+        });
+      } else if (response.error == unauthorized) {
+        logout().then((value) => {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  (route) => false)
+            });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${response.error}')));
+      }
+    } catch (e, stacktrace) {
+      log("Erro ao carregar os dados de lucroCorrida: $e", stackTrace: stacktrace);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao carregar os dados de lucroCorrida')));
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
     getAmount();
+    getLucroCorrida();
   }
 
   @override
@@ -95,6 +128,32 @@ class _BalancoState extends State<Balanco> {
     final size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
+
+     if ( lucroCorrida == null || lucroCorrida!.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75)),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Dashboard()),
+                  (route) => false);
+            },
+          ),
+        ),
+        backgroundColor: Color(0xFF171f20),
+        body: Center(
+          child: 
+           Text("Você ainda não possui lucro", style: TextStyle(color: Colors.white),)
+        ),
+      );
+    }
+
+if (totalExpense == null || lucroCorrida!.isNotEmpty) {
+    lucroCorridaModel segundoLucro = lucroCorrida![0];
+    double lucroAtual = double.tryParse(segundoLucro.total_lucro ?? '0') ?? 0;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -141,7 +200,7 @@ class _BalancoState extends State<Balanco> {
             SizedBox(height: height * 0.04),
             _buildInfoCard(width, 'Gastos', currencyFormat.format(totalExpense), Colors.grey[200]!),
             SizedBox(height: height * 0.02),
-            _buildInfoCard(width, 'Lucro', 'R\$359', Colors.grey[200]!),
+            _buildInfoCard(width, 'Lucro',currencyFormat.format(lucroAtual) , Colors.grey[200]!),
             SizedBox(height: height * 0.04),
             // Construindo a lista de gastos
             ..._gastos.map((gasto) {
@@ -159,7 +218,10 @@ class _BalancoState extends State<Balanco> {
                   ),
                 ),
                 onPressed: () {
-                  // Ação de adicionar saída
+                  Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => AdicionarSaida()), 
+                          (route) => false);
+
                 },
                 child: Text(
                   'Adicionar saída',
@@ -174,6 +236,17 @@ class _BalancoState extends State<Balanco> {
         ),
       ),
     );
+}else {
+      return Scaffold(
+        backgroundColor: Color(0xFF171f20),
+        body: Center(
+          child: Text(
+            'Nenhum dado disponível.',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildInfoCard(double width, String title, String amount, Color color) {

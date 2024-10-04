@@ -15,6 +15,11 @@ const userURL = baseURL + '/user';
 const postsURL = baseURL + '/posts';
 const commentsURL = baseURL + '/comments';
 const classcorridasURL = baseURL + '/classcorridas';
+const saidaLucro = baseURL + '/subtract-from-lucro';
+const saidaLucroAdd = baseURL + '/add-saida-lucro';
+const saidaLucroGet = baseURL + '/get-saida-lucro';
+const getGastos = baseURL + '/get-saida-lucro';
+const getLerCorrida = baseURL + '/lercorrida';
 
 // ----- Errors -----
 const serverError = 'Server error';

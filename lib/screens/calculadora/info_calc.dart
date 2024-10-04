@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../dashboard.dart';
+
 
 
 
@@ -15,15 +17,17 @@ class _CalculadoraLucroScreenState extends State<CalculadoraLucroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            // Ação de voltar
-          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75)),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Dashboard()),
+                  (route) => false);
+            },
+          ),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

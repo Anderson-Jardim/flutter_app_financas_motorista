@@ -1,13 +1,19 @@
+import 'dart:developer';
+
 import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/balanco/meu_balanco.dart';
 import 'package:app_fingo/screens/calculadora/info_calc.dart';
 import 'package:app_fingo/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
-import '../meta_lucro.dart';
+import 'historico/lista_historico.dart';
+import 'meta_lucro.dart';
 import '../models/api_response.dart';
+import '../models/lucro_corrida_model.dart';
 import '../models/user.dart';
+import '../services/lucro_corrida.dart';
 import '../services/user_service.dart';
 
 class Dashboard extends StatefulWidget {
@@ -18,6 +24,8 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   User? user;
   bool loading = true;
+  List<lucroCorridaModel>? lucroCorrida;
+    final NumberFormat currencyFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
 
   void getUser() async {
     ApiResponse response = await getUserDetail();
@@ -40,17 +48,101 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+
+  
+  void getLucroCorrida() async {
+    try {
+      ApiResponse response = await getlucroCorridaDetail();
+      if (response.error == null) {
+        setState(() {
+          lucroCorrida = response.data as List<lucroCorridaModel>;
+          loading = false;
+        });
+      } else if (response.error == unauthorized) {
+        logout().then((value) => {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+              (route) => false)
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${response.error}')));
+      }
+    } catch (e, stacktrace) {
+      log("Erro ao carregar os dados de lucroCorrida: $e", stackTrace: stacktrace);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao carregar os dados de lucroCorrida')));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getUser();
+    getLucroCorrida();
   }
-
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+final size = MediaQuery.of(context).size;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+      // Verificação de nulidade
+    if (lucroCorrida == null || lucroCorrida!.isEmpty) {
+      return Scaffold(
+        backgroundColor: Color(0xFF171f20),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/images/logo_02.png',
+              alignment: Alignment.topLeft,
+            ),
+          ),
+          title: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              user?.username ?? 'Carregando...',
+              style: GoogleFonts.poppins(color: Colors.white),
+            ),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                logout().then((value) => {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => HomeScreen()), 
+                    (route) => false
+                  )
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Color(0xFF00ff75), width: 2),
+                  ),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    child: Text(
+                      user?.username?.substring(0, 2) ?? '??',
+                      style: GoogleFonts.poppins(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        body: Center(child: CircularProgressIndicator()), // Mostra um indicador de progresso enquanto os dados são carregados
+      );
+    }
+
+lucroCorridaModel corrida = lucroCorrida![0];
+double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
+    
     return Scaffold(
       backgroundColor: Color(0xFF171f20),
       appBar: AppBar(
@@ -138,7 +230,7 @@ class _DashboardState extends State<Dashboard> {
                   Container(
                     width: width * 0.85,
                     child: Text(
-                    'R\$0,00',
+                    currencyFormat.format(valorCorrida),
                     style: GoogleFonts.poppins(
                               color: Color(0xFF00ff75),
                               fontSize: 40,
@@ -155,7 +247,9 @@ class _DashboardState extends State<Dashboard> {
                       runSpacing: 20, // Espaçamento vertical entre os containers
                       children: [
                         DashboardButton(title: 'Histórico', onTap: (){
-
+                          Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => HistCorridas()), 
+                          (route) => false);
                         },),
                         DashboardButton(title: 'Progresso', onTap: (){
                           

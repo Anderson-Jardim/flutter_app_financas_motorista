@@ -215,6 +215,7 @@ private fun extractDistanceValue(text: String): Double? {
                                                     .add("total_distance", totalDistance.toString())
                                                     .add("valor", decimalValue.toString())
                                                     .add("lucro", totalLucro.toString())
+                                                    .add("total_custo", totalCusto.toString())
                                                     .add("valor_por_km", valorPorKm.toString())
                                                     .add("tipo_corrida", corridaTipo)  // Usando corridaTipo aqui
                                                     .build()
@@ -290,7 +291,7 @@ private fun extractDistanceValue(text: String): Double? {
 
     override fun onInterrupt() {}
 
-   private fun showCustomCard(corridaTipo: String, valorPorKm: Double) {
+   private fun showCustomCard(corridaTipo: String, totalLucro: Double) {
     try {
         val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val layoutParams = WindowManager.LayoutParams(
@@ -314,7 +315,7 @@ private fun extractDistanceValue(text: String): Double? {
         // Definir o texto conforme os valores capturados
         imageViewCorrida
         textViewGanhoKM.text
-        textViewDistancia.text = "${"%.2f".format(totalDistance)} km/R$ ${"%.2f".format(valorPorKm)}"
+        textViewDistancia.text = "Lucro da Corrida R$ ${"%.2f".format(totalLucro)}"
         
      val imageUrl =   when (corridaTipo) {
     "Corrida Bronze" -> R.drawable.bandeirabronze

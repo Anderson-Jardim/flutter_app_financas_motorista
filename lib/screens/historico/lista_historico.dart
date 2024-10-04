@@ -6,21 +6,23 @@ import 'package:intl/intl.dart';
 import '../../constant.dart';
 import '../../models/api_response.dart';
 import '../../models/gastos_model.dart';
+import '../../models/ler_corrida_model.dart';
 import '../../models/lucro_corrida_model.dart';
 import '../../models/saida_lucro_model.dart';
+import '../../services/ler_corrida_service.dart';
 import '../../services/lucro_saidas_service.dart';
 import '../../services/user_service.dart';
 import '../../services/lucro_corrida.dart';
 import '../dashboard.dart';
 import '../welcome.dart';
-import 'balanco_saidas.dart';
 
-class Balanco extends StatefulWidget {
+
+class HistCorridas extends StatefulWidget {
   @override
-  _BalancoState createState() => _BalancoState();
+  _HistCorridasState createState() => _HistCorridasState();
 }
 
-class _BalancoState extends State<Balanco> {
+class _HistCorridasState extends State<HistCorridas> {
   final MoneyMaskedTextController moneyController = MoneyMaskedTextController(
     leftSymbol: 'R\$ ',
     decimalSeparator: ',',
@@ -32,12 +34,11 @@ class _BalancoState extends State<Balanco> {
     thousandSeparator: '.',
   );
 
-  List<Map<String, dynamic>> _gastos = [];
-  double totalExpense = 0.0;
-  List<Gastos> getgastos = [];
-  List<saidaLucroModel> _saidas = [];
+
+
   bool loading = true;
-  List<lucroCorridaModel>? lucroCorrida;
+ 
+    List<LerCorridaModel> _saidas = [];
   final NumberFormat currencyFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
 
   @override
@@ -47,46 +48,13 @@ class _BalancoState extends State<Balanco> {
     super.dispose();
   }
 
-  void getAmount() async {
-    ApiResponse response = await getExpensesDetail();
-    if (response.error == null && mounted) {
-      setState(() {
-        List<Gastos> getgastos = response.data as List<Gastos>;
-        loading = false;
 
-        if (getgastos.isNotEmpty) {
-          Gastos firstItem = getgastos[0];
-          _gastos = List<Map<String, dynamic>>.from(firstItem.gastos ?? []);
-          totalExpense = _gastos.fold(0.0, (sum, item) => sum + (item['amount'] ?? 0.0));
-        } else {
-          _gastos = [];
-          totalExpense = 0.0;
-        }
-      });
-    } else if (response.error == unauthorized) {
-      logout().then((value) {
-        if (mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-            (route) => false,
-          );
-        }
-      });
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Erro ao obter despesas: ${response.error}'),
-        ));
-      }
-    }
-  }
-
-  void getLucroCorrida() async {
+void getlerCorrida() async {
     try {
-      ApiResponse response = await getlucroCorridaDetail();
+      ApiResponse response = await getlerCorridaDetail();
       if (response.error == null) {
         setState(() {
-          lucroCorrida = response.data as List<lucroCorridaModel>;
+          _saidas = response.data as List<LerCorridaModel>;
           loading = false;
         });
       } else if (response.error == unauthorized) {
@@ -105,38 +73,12 @@ class _BalancoState extends State<Balanco> {
           SnackBar(content: Text('Erro ao carregar os dados de lucroCorrida')));
     }
   }
-  void getSaidas() async {
-  ApiResponse response = await getSaidasDetail(); // Supondo que você tenha uma função que busca as saídas
-  if (response.error == null && mounted) {
-    setState(() {
-      _saidas = response.data as List<saidaLucroModel>; // Converta os dados corretamente para a lista de saídas
-      loading = false;
-    });
-  } else if (response.error == unauthorized) {
-    logout().then((value) {
-      if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-          (route) => false,
-        );
-      }
-    });
-  } else {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Erro ao obter saídas: ${response.error}'),
-      ));
-    }
-  }
-}
 
 
   @override
   void initState() {
     super.initState();
-    getAmount();
-    getLucroCorrida();
-    getSaidas();
+    getlerCorrida();
   }
 
   @override
@@ -145,7 +87,7 @@ class _BalancoState extends State<Balanco> {
     final height = size.height;
     final width = size.width;
 
-    if (lucroCorrida == null || lucroCorrida!.isEmpty) {
+    if (_saidas == null || _saidas.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -166,11 +108,9 @@ class _BalancoState extends State<Balanco> {
       );
     }
 
-    if (totalExpense == null || lucroCorrida!.isNotEmpty) {
-      lucroCorridaModel segundoLucro = lucroCorrida![0];
-     /*  lucroCorridaModel gastoLucro = lucroCorrida![0]; */
-      double lucroAtual = double.tryParse(segundoLucro.total_lucro ?? '0') ?? 0;
-      double gastoAtual = double.tryParse(segundoLucro.total_gasto ?? '0') ?? 0;
+   
+      
+      
 
       return Scaffold(
         backgroundColor: Colors.white,
@@ -204,39 +144,22 @@ class _BalancoState extends State<Balanco> {
                 'Veja a divisão completa dos seus ganhos.',
                 style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
               ),
-              SizedBox(height: height * 0.04),
+              SizedBox(height: height * 0.04), /*
               _buildInfoCard(width, 'Gastos', currencyFormat.format(gastoAtual), Colors.grey[200]!),
               SizedBox(height: height * 0.02),
               _buildInfoCard(width, 'Lucro', currencyFormat.format(lucroAtual), Colors.grey[200]!),
-              SizedBox(height: height * 0.04),
+              SizedBox(height: height * 0.04), */
               // Substituição pela nova lista de saídas
               _buildSaidasList(width),
               SizedBox(height: height * 0.04),
               Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                    padding: EdgeInsets.symmetric(vertical: height * 0.02, horizontal: width * 0.2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => AdicionarSaida()),
-                        (route) => false);
-                  },
-                  child: Text(
-                    'Adicionar saída',
-                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 16),
-                  ),
-                ),
+                
               ),
             ],
           ),
         ),
       );
-    } else {
+  
       return Scaffold(
         backgroundColor: Color(0xFF171f20),
         body: Center(
@@ -246,7 +169,7 @@ class _BalancoState extends State<Balanco> {
           ),
         ),
       );
-    }
+    
   }
 
   Widget _buildInfoCard(double width, String title, String amount, Color color) {
@@ -281,11 +204,11 @@ Widget _buildSaidasList(double width) {
     physics: NeverScrollableScrollPhysics(),
     itemCount: _saidas.length,
     itemBuilder: (context, index) {
-      print('Exibindo saída: ${_saidas[index].nome_saida}'); // Log da saída exibida
+      print('Exibindo saída: ${_saidas[index].tipo_corrida}'); // Log da saída exibida
       return ListTile(
-        title: Text(_saidas[index].nome_saida.toString()),
+        title: Text(_saidas[index].tipo_corrida.toString()),
         subtitle: Text(
-          'Lucro: ${_saidas[index].saida_lucro} | Tipo: ${_saidas[index].tipo} | Data: ${_saidas[index].createdAt}',
+          'Lucro: ${_saidas[index].valor} | Data: ${_saidas[index].createdAt}',
         ),
       );
     },

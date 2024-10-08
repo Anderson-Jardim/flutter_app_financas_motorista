@@ -1,14 +1,14 @@
-import 'package:app_fingo/screens/welcome.dart';
+import 'package:app_fingo/screens/login/welcome.dart';
 import 'package:flutter/material.dart';
 
-import '../constant.dart';
-import '../models/api_response.dart';
-import '../services/user_service.dart';
-import 'dashboard.dart';
+import '../../constant.dart';
+import '../../models/api_response.dart';
+import '../../services/user_service.dart';
+import '../dashboard.dart';
 import 'login.dart';
-import 'register/gastos.dart';
-import 'register/infoone.dart';
-import 'register/register.dart';
+import '../register/gastos.dart';
+import '../register/infoone.dart';
+import '../register/register.dart';
 
 
 class Loading extends StatefulWidget {

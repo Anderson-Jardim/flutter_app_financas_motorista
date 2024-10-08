@@ -1,4 +1,4 @@
-import 'package:app_fingo/screens/login.dart';
+import 'package:app_fingo/screens/login/login.dart';
 import 'package:app_fingo/screens/register/register.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

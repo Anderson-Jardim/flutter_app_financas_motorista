@@ -1,8 +1,8 @@
-import 'package:app_fingo/screens/login.dart';
+import 'package:app_fingo/screens/login/login.dart';
 import 'package:flutter/material.dart';
 
-import 'screens/loading.dart';
-import 'screens/welcome.dart';
+import 'screens/login/loading.dart';
+import 'screens/login/welcome.dart';
 
 void main() {
   runApp(App());

@@ -1,15 +1,15 @@
 import 'dart:developer'; // Import para usar o log
 import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/dashboard.dart';
-import 'package:app_fingo/screens/welcome.dart';
+import 'package:app_fingo/screens/login/welcome.dart';
 import 'package:app_fingo/services/lucro_corrida.dart';
 import 'package:app_fingo/services/meslucro_service.dart';
 import 'package:app_fingo/services/user_service.dart';
 import 'package:flutter/material.dart';
 
-import '../models/api_response.dart';
-import '../models/lucro_corrida_model.dart';
-import '../models/meslucro_model.dart';
+import '../../models/api_response.dart';
+import '../../models/lucro_corrida_model.dart';
+import '../../models/meslucro_model.dart';
 
 class MetaLucroScreen extends StatefulWidget {
   @override

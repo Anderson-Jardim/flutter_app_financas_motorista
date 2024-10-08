@@ -20,6 +20,8 @@ const saidaLucroAdd = baseURL + '/add-saida-lucro';
 const saidaLucroGet = baseURL + '/get-saida-lucro';
 const getGastos = baseURL + '/get-saida-lucro';
 const getLerCorrida = baseURL + '/lercorrida';
+const logo01 = baseURL + '/images/logo_01.png';
+const logo02 = baseURL + '/images/logo_02.png';
 
 // ----- Errors -----
 const serverError = 'Server error';

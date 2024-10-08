@@ -11,7 +11,7 @@ import '../../models/classcorridas_model.dart';
 import '../../services/classcorridas_service.dart';
 import '../../services/user_service.dart';
 import 'finalcad.dart';
-import '../welcome.dart';
+import '../login/welcome.dart';
 import 'meslucros.dart';
 
 class Classcorridas extends StatefulWidget {

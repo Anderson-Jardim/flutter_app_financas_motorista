@@ -3,13 +3,14 @@ import 'dart:developer';
 import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/balanco/meu_balanco.dart';
 import 'package:app_fingo/screens/calculadora/info_calc.dart';
-import 'package:app_fingo/screens/welcome.dart';
+import 'package:app_fingo/screens/login/welcome.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'historico/lista_historico.dart';
-import 'meta_lucro.dart';
+import 'meta_lucro/meta_lucro.dart';
 import '../models/api_response.dart';
 import '../models/lucro_corrida_model.dart';
 import '../models/user.dart';
@@ -33,6 +34,7 @@ class _DashboardState extends State<Dashboard> {
       setState(() {
         user = response.data as User;
         loading = false;
+
       });
     } else if (response.error == unauthorized) {
       logout().then((value) => {
@@ -75,6 +77,14 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+Future<void> _refreshData() async {
+    setState(() {
+      loading = true;
+    });
+    getUser();
+    getLucroCorrida();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -86,73 +96,46 @@ class _DashboardState extends State<Dashboard> {
 final size = MediaQuery.of(context).size;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
+    debugInvertOversizedImages = true;
       // Verificação de nulidade
     if (lucroCorrida == null || lucroCorrida!.isEmpty) {
-      return Scaffold(
-        backgroundColor: Color(0xFF171f20),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-              'assets/images/logo_02.png',
-              alignment: Alignment.topLeft,
-            ),
-          ),
-          title: Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              user?.username ?? 'Carregando...',
-              style: GoogleFonts.poppins(color: Colors.white),
-            ),
-          ),
-          actions: [
-            GestureDetector(
-              onTap: () {
-                logout().then((value) => {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => HomeScreen()), 
-                    (route) => false
-                  )
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Color(0xFF00ff75), width: 2),
-                  ),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    child: Text(
-                      user?.username?.substring(0, 2) ?? '??',
-                      style: GoogleFonts.poppins(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        body: Center(child: CircularProgressIndicator()), // Mostra um indicador de progresso enquanto os dados são carregados
-      );
-    }
+      
 
-lucroCorridaModel corrida = lucroCorrida![0];
-double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
-    
-    return Scaffold(
+      return loading ?
+      Scaffold(
+        backgroundColor: Color(0xFF171f20),
+        body: Center(
+              child: CircularProgressIndicator(
+              color: Color(0xFF00ff75),
+              backgroundColor: Color(0xFF171f20),
+            )),
+      )
+      
+      : Scaffold(
       backgroundColor: Color(0xFF171f20),
       appBar: AppBar(
         
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'assets/images/logo_02.png', 
+          padding:  EdgeInsets.all(8.0),
+          child: Image(
+            image: CachedNetworkImageProvider(
+            maxWidth: 100,
+            maxHeight: 100,
+            logo02,     
+            ),
+            loadingBuilder: (context, child, loadingProgress){
+              if(loadingProgress == null){
+                return child;
+              }
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Colors.transparent,
+                ),
+              );
+            },
             alignment: Alignment.topLeft,
           ),
         ),
@@ -160,7 +143,8 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
            title: Align(
           alignment: Alignment.centerRight,
           child: Text(
-            user?.username ?? 'Carregando...',
+            user != null ? 
+      '${user!.username!.split(' ').first} ${user!.username!.split(' ').last}' : '',
             style: GoogleFonts.poppins(
                               color: Colors.white,
                               
@@ -191,7 +175,9 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
           
                   backgroundColor: Colors.transparent,
                   child: Text(
-                    user?.username?.substring(0, 2) ?? '??', 
+                    user?.username != null && user!.username!.isNotEmpty
+        ? '${user!.username!.split(' ')[0][0]}${user!.username!.split(' ').last[0]}'
+        : '',
                     style: GoogleFonts.poppins(
                                 color: Colors.white,
                               
@@ -203,96 +189,286 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: loading 
-          ? Center(child: CircularProgressIndicator()) 
-          : Container(
-              width:width * 2.9,
-              height: height * 0.85,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: height * 0.05),
-                  Container(
-                    width: width * 0.85,
-                    child: Text(
-                    'Saldo atual',
-                    style: GoogleFonts.poppins(
-                              color: Color(0xFFc2c2c2),
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500,
-                              ),
-                  ),
-                  ),
-                  
-                  SizedBox(height: height * 0.01),
-                  Container(
-                    width: width * 0.85,
-                    child: Text(
-                    currencyFormat.format(valorCorrida),
-                    style: GoogleFonts.poppins(
-                              color: Color(0xFF00ff75),
-                              fontSize: 40,
-                              fontWeight: FontWeight.w700,
-                              ),
-                    ),
-                  ),
-                  
-                   SizedBox(height: height * 0.03),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Wrap(
-                      spacing: 20, // Espaçamento horizontal entre os containers
-                      runSpacing: 20, // Espaçamento vertical entre os containers
-                      children: [
-                        DashboardButton(title: 'Histórico', onTap: (){
-                          Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => HistCorridas()), 
-                          (route) => false);
-                        },),
-                        DashboardButton(title: 'Progresso', onTap: (){
-                          
-                          Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => MetaLucroScreen()), 
-                          (route) => false);
-
-                        },),
-                         DashboardButton(title: 'Meu balanço', onTap: () {
-                         Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => Balanco()), 
-                          (route) => false);
-
-                        }),
-                        DashboardButton(title: 'Calculadora', onTap: (){
-                           Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => CalculadoraLucroScreen()), 
-                          (route) => false);
-                        },),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: height * 0.04),
-                  Container(
-                    width: width * 0.87,
-                    height:  height* 0.22,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFF0000),
-                      border: Border.all(
-                       // Cor da borda
-                        width: 2, // Largura da borda
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        color: Color(0xFF171f20),
+        child: ListView(
+          children: [
+            Container(
+                  width:width * 2.9,
+                  height: height * 0.85,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: height * 0.05),
+                      Container(
+                        width: width * 0.85,
+                        child: Text(
+                        'Saldo atual',
+                        style: GoogleFonts.poppins(
+                                  color: Color(0xFFc2c2c2),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                  ),
                       ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    
+                      ),
+                      
+                      SizedBox(height: height * 0.01),
+                      Container(
+                        width: width * 0.85,
+                        child: Text(
+                        "R\$ 0,00",
+                        style: GoogleFonts.poppins(
+                                  color: Color(0xFF00ff75),
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w700,
+                                  ),
+                        ),
+                      ),
+                      
+                       SizedBox(height: height * 0.03),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Wrap(
+                          spacing: 20, // Espaçamento horizontal entre os containers
+                          runSpacing: 20, // Espaçamento vertical entre os containers
+                          children: [
+                            DashboardButton(title: 'Histórico', onTap: (){
+                              Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => HistCorridas()), 
+                              (route) => false);
+                            },),
+                            DashboardButton(title: 'Progresso', onTap: (){
+                              
+                              Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => MetaLucroScreen()), 
+                              (route) => false);
+      
+                            },),
+                             DashboardButton(title: 'Meu balanço', onTap: () {
+                             Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => Balanco()), 
+                              (route) => false);
+      
+                            }),
+                            DashboardButton(title: 'Calculadora', onTap: (){
+                               Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => CalculadoraLucroScreen()), 
+                              (route) => false);
+                            },),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: height * 0.04),
+                      Container(
+                        width: width * 0.87,
+                        height:  height* 0.22,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFF0000),
+                          border: Border.all(
+                           // Cor da borda
+                            width: 2, // Largura da borda
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        
+                      ),
+                      
+                   SizedBox(height: height * 0.01),
+                    ],
                   ),
-                  
-               SizedBox(height: height * 0.01),
-                ],
-              ),
-            ),
+                ),
+          ],
+        ),
       ),
     );
+    }
+
+lucroCorridaModel corrida = lucroCorrida![0];
+double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
+    
+    return loading ?
+      Scaffold(
+        backgroundColor: Color(0xFF171f20),
+        body: Center(
+              child: CircularProgressIndicator(
+              color: Color(0xFF00ff75),
+              backgroundColor: Color(0xFF171f20),
+            )),
+      )
+      
+      : Scaffold(
+      backgroundColor: Color(0xFF171f20),
+      appBar: AppBar(
+        
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Padding(
+          padding:  EdgeInsets.all(8.0),
+          child: Image(
+            image: CachedNetworkImageProvider(
+            maxWidth: 100,
+            maxHeight: 100,
+            logo02,     
+            ),
+            loadingBuilder: (context, child, loadingProgress){
+              if(loadingProgress == null){
+                return child;
+              }
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Colors.transparent,
+                ),
+              );
+            },
+            alignment: Alignment.topLeft,
+          ),
+        ),
+      
+           title: Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+              user != null ? 
+      '${user!.username!.split(' ').first} ${user!.username!.split(' ').last}' : '',
+            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              
+                              ), // Adiciona estilo ao texto se necessário
+          ),
+        ),
+      
+        actions: [
+          GestureDetector(
+            onTap: (){
+              logout().then((value) => {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => HomeScreen()), 
+                          (route) => false
+                        )
+                      });
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+               
+               
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Color(0xFF00ff75), width: 2), // Cor e largura da borda
+                ),
+                child: CircleAvatar(
+          
+                  backgroundColor: Colors.transparent,
+                  child: Text(
+                    user?.username != null && user!.username!.isNotEmpty
+        ? '${user!.username!.split(' ')[0][0]}${user!.username!.split(' ').last[0]}'
+        : '', 
+                    style: GoogleFonts.poppins(
+                                color: Colors.white,
+                              
+                                ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        color: Color(0xFF171f20),
+        child: ListView(
+          children: [
+            Container(
+                  width:width * 2.9,
+                  height: height * 0.85,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: height * 0.05),
+                      Container(
+                        width: width * 0.85,
+                        child: Text(
+                        'Saldo atual',
+                        style: GoogleFonts.poppins(
+                                  color: Color(0xFFc2c2c2),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                  ),
+                      ),
+                      ),
+                      
+                      SizedBox(height: height * 0.01),
+                      Container(
+                        width: width * 0.85,
+                        child: Text(
+                        currencyFormat.format(valorCorrida),
+                        style: GoogleFonts.poppins(
+                                  color: Color(0xFF00ff75),
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w700,
+                                  ),
+                        ),
+                      ),
+                      
+                       SizedBox(height: height * 0.03),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Wrap(
+                          spacing: 20, // Espaçamento horizontal entre os containers
+                          runSpacing: 20, // Espaçamento vertical entre os containers
+                          children: [
+                            DashboardButton(title: 'Histórico', onTap: (){
+                              Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => HistCorridas()), 
+                              (route) => false);
+                            },),
+                            DashboardButton(title: 'Progresso', onTap: (){
+                              
+                              Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => MetaLucroScreen()), 
+                              (route) => false);
+            
+                            },),
+                             DashboardButton(title: 'Meu balanço', onTap: () {
+                             Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => Balanco()), 
+                              (route) => false);
+            
+                            }),
+                            DashboardButton(title: 'Calculadora', onTap: (){
+                               Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => CalculadoraLucroScreen()), 
+                              (route) => false);
+                            },),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: height * 0.04),
+                      Container(
+                        width: width * 0.87,
+                        height:  height* 0.22,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFF0000),
+                          border: Border.all(
+                           // Cor da borda
+                            width: 2, // Largura da borda
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        
+                      ),
+                      
+                   SizedBox(height: height * 0.01),
+                    ],
+                  ),
+                ),
+          ],
+        ),
+      ),
+        );
   }
 }
 

@@ -12,7 +12,7 @@ import '../../constant.dart';
 import '../../models/api_response.dart';
 import '../../models/gastos_model.dart';
 import '../../services/user_service.dart';
-import '../welcome.dart';
+import '../login/welcome.dart';
 import 'infoone.dart';
 import 'register.dart';
 

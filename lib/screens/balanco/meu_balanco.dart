@@ -12,7 +12,7 @@ import '../../services/lucro_saidas_service.dart';
 import '../../services/user_service.dart';
 import '../../services/lucro_corrida.dart';
 import '../dashboard.dart';
-import '../welcome.dart';
+import '../login/welcome.dart';
 import 'balanco_saidas.dart';
 
 class Balanco extends StatefulWidget {
@@ -161,7 +161,14 @@ class _BalancoState extends State<Balanco> {
         ),
         backgroundColor: Color(0xFF171f20),
         body: Center(
-          child: Text("Você ainda não possui lucro", style: TextStyle(color: Colors.white)),
+
+          child: Text(
+            "Você ainda não possui lucro \n (Realize a sua primeira corrida para contabilizar)", 
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(fontSize: 20, 
+            fontWeight: FontWeight.bold, 
+            color: Colors.white),
+            ),
         ),
       );
     }

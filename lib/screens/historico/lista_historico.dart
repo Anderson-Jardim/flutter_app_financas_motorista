@@ -14,7 +14,7 @@ import '../../services/lucro_saidas_service.dart';
 import '../../services/user_service.dart';
 import '../../services/lucro_corrida.dart';
 import '../dashboard.dart';
-import '../welcome.dart';
+import '../login/welcome.dart';
 
 
 class HistCorridas extends StatefulWidget {
@@ -103,7 +103,13 @@ void getlerCorrida() async {
         ),
         backgroundColor: Color(0xFF171f20),
         body: Center(
-          child: Text("Você ainda não possui lucro", style: TextStyle(color: Colors.white)),
+          child: Text(
+            "Você ainda não possui histórico \n (Realize a sua primeira corrida para contabilizar)", 
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(fontSize: 20, 
+            fontWeight: FontWeight.bold, 
+            color: Colors.white),
+            ),
         ),
       );
     }

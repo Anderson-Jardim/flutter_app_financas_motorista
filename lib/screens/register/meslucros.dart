@@ -11,7 +11,7 @@ import '../../models/api_response.dart';
 import '../../models/meslucro_model.dart';
 import '../../services/meslucro_service.dart';
 import '../../services/user_service.dart';
-import '../welcome.dart';
+import '../login/welcome.dart';
 import 'classcorridas.dart';
 
 class MesLucros extends StatefulWidget {

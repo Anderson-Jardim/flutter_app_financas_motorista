@@ -11,7 +11,7 @@ import '../../models/api_response.dart';
 import '../../models/infoone_model.dart';
 import '../../models/user.dart';
 import '../../services/user_service.dart';
-import '../welcome.dart';
+import '../login/welcome.dart';
 import 'gastos.dart';
 import 'meslucros.dart';
 

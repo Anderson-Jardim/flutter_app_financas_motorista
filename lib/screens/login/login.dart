@@ -1,16 +1,16 @@
 
 import 'package:app_fingo/screens/dashboard.dart';
-import 'package:app_fingo/screens/welcome.dart';
+import 'package:app_fingo/screens/login/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constant.dart';
-import '../models/api_response.dart';
-import '../models/user.dart';
-import '../services/user_service.dart';
-import 'home.dart';
-import 'register/register.dart';
+import '../../constant.dart';
+import '../../models/api_response.dart';
+import '../../models/user.dart';
+import '../../services/user_service.dart';
+
+import '../register/register.dart';
 
 class Login extends StatefulWidget {
   @override

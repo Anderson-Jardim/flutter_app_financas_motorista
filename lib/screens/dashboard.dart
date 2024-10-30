@@ -143,8 +143,12 @@ final size = MediaQuery.of(context).size;
            title: Align(
           alignment: Alignment.centerRight,
           child: Text(
-            user != null ? 
-      '${user!.username!.split(' ').first} ${user!.username!.split(' ').last}' : '',
+             user != null 
+      ? (user!.username!.contains(' ') 
+          ? '${user!.username!.split(' ').first} ${user!.username!.split(' ').last}' 
+          : '${user!.username!.split(' ').first}'
+        )
+      : '',
             style: GoogleFonts.poppins(
                               color: Colors.white,
                               
@@ -175,9 +179,11 @@ final size = MediaQuery.of(context).size;
           
                   backgroundColor: Colors.transparent,
                   child: Text(
-                    user?.username != null && user!.username!.isNotEmpty
+                     user?.username != null && user!.username!.isNotEmpty
+    ? user!.username!.contains(' ')
         ? '${user!.username!.split(' ')[0][0]}${user!.username!.split(' ').last[0]}'
-        : '',
+        : '${user!.username![0]}'
+    : '',
                     style: GoogleFonts.poppins(
                                 color: Colors.white,
                               
@@ -329,8 +335,12 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
            title: Align(
           alignment: Alignment.centerRight,
           child: Text(
-              user != null ? 
-      '${user!.username!.split(' ').first} ${user!.username!.split(' ').last}' : '',
+              user != null 
+      ? (user!.username!.contains(' ') 
+          ? '${user!.username!.split(' ').first} ${user!.username!.split(' ').last}' 
+          : '${user!.username!.split(' ').first}'
+        )
+        : '',
             style: GoogleFonts.poppins(
                               color: Colors.white,
                               
@@ -362,8 +372,10 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
                   backgroundColor: Colors.transparent,
                   child: Text(
                     user?.username != null && user!.username!.isNotEmpty
+    ? user!.username!.contains(' ')
         ? '${user!.username!.split(' ')[0][0]}${user!.username!.split(' ').last[0]}'
-        : '', 
+        : '${user!.username![0]}'
+         : '',
                     style: GoogleFonts.poppins(
                                 color: Colors.white,
                               

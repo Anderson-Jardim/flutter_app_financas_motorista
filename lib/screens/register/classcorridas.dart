@@ -71,7 +71,7 @@ class _ClasscorridasState extends State<Classcorridas> {
                 (route) => false,
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Classcorridas atualizado com sucesso')),
+                SnackBar(content: Text('Dados atualizados com sucesso')),
               );
             }
           } else {
@@ -79,7 +79,7 @@ class _ClasscorridasState extends State<Classcorridas> {
             print('Resposta do servidor: ${updateResponse.body}');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao atualizar classcorridas: ${updateResponse.statusCode}')),
+                SnackBar(content: Text('Falha ao atualizar dados: ${updateResponse.statusCode}')),
               );
             }
           }
@@ -101,7 +101,7 @@ class _ClasscorridasState extends State<Classcorridas> {
                 (route) => false,
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Classcorridas adicionado com sucesso')),
+                SnackBar(content: Text('Dados adicionados com sucesso')),
               );
             }
           } else {
@@ -109,7 +109,7 @@ class _ClasscorridasState extends State<Classcorridas> {
             print('Resposta do servidor: ${createResponse.body}');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao adicionar classcorridas: ${createResponse.statusCode}')),
+                SnackBar(content: Text('Falha ao adicionar dados: ${createResponse.statusCode}')),
               );
             }
           }
@@ -119,7 +119,7 @@ class _ClasscorridasState extends State<Classcorridas> {
         print('Resposta do servidor: ${checkResponse.body}');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Falha ao verificar classcorridas: ${checkResponse.statusCode}')),
+            SnackBar(content: Text('Falha ao verificar dados: ${checkResponse.statusCode}')),
           );
         }
       }

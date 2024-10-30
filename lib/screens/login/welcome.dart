@@ -1,11 +1,15 @@
+import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/login/login.dart';
 import 'package:app_fingo/screens/register/register.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    debugInvertOversizedImages = true;
+
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -20,12 +24,33 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [                 
-                     SizedBox(height: height * 0.09),
+                     SizedBox(height: height * 0.02),
 
                     Container(
                       width: 300,
                       height: 130, 
-                      child: Image.asset('assets/images/logo_01.png', alignment: Alignment.topLeft),
+                      child: 
+                      Padding(
+          padding:  EdgeInsets.all(1.0),
+          child: Image(
+            image: CachedNetworkImageProvider(
+            maxWidth: 782,
+            maxHeight: 400,
+            logo01,     
+            ),
+            loadingBuilder: (context, child, loadingProgress){
+              if(loadingProgress == null){
+                return child;
+              }
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Colors.transparent,
+                ),
+              );
+            },
+            alignment: Alignment.topLeft,
+          ),
+        ),
                     ),
 
                       Container(                  
@@ -108,7 +133,7 @@ class HomeScreen extends StatelessWidget {
                           )
                         ),
                       ),
-                    SizedBox(height: height * 0.05),
+                    SizedBox(height: height * 0.02),
                     ],
                   ),
                 ),

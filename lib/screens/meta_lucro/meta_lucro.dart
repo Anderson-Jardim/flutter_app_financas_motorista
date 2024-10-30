@@ -6,6 +6,7 @@ import 'package:app_fingo/services/lucro_corrida.dart';
 import 'package:app_fingo/services/meslucro_service.dart';
 import 'package:app_fingo/services/user_service.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../models/api_response.dart';
 import '../../models/lucro_corrida_model.dart';
@@ -82,6 +83,10 @@ class _MetaLucroScreenState extends State<MetaLucroScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
+    
     if (loading) {
       return Scaffold(
         backgroundColor: Color(0xFF171f20),
@@ -92,6 +97,8 @@ class _MetaLucroScreenState extends State<MetaLucroScreen> {
         ),
       );
     }
+    meslucroModel primeiroLucro = lucroMes![0];
+        double lucroDesejado = double.tryParse(primeiroLucro.qtd_mes_lucros ?? '0') ?? 0;
 
     // Verifique se `lucroMes` e `lucroCorrida` não são nulos e contêm elementos
     if (lucroMes == null || lucroCorrida == null || lucroMes!.isEmpty || lucroCorrida!.isEmpty) {
@@ -109,9 +116,60 @@ class _MetaLucroScreenState extends State<MetaLucroScreen> {
           ),
         ),
         backgroundColor: Color(0xFF171f20),
-        body: Center(
-          child: 
-           Text("Você ainda não possui lucro", style: TextStyle(color: Colors.white),)
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+            SizedBox(height: height * 0.04),
+                Text(
+                  textAlign: TextAlign.center,
+                  'Visualize sua\nmeta de lucro.',
+                  style: GoogleFonts.poppins(
+                              fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                SizedBox(height: height * 0.08),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Círculo de progresso
+                    SizedBox(
+                      width: 250,
+                      height: 250,
+                      child: CircularProgressIndicator(
+                        value: 0,
+                        strokeWidth: 15,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+                        backgroundColor: Colors.grey[800],
+                      ),
+                    ),
+                    // Texto no centro do círculo
+                    Text(
+                      '0%',
+                      style: GoogleFonts.poppins(
+                              fontSize: 32, fontWeight: FontWeight.w500, color: Colors.white),
+                    ),
+                  ],
+                ),
+                SizedBox(height: height * 0.08),
+                // Texto indicando quanto falta para atingir a meta
+                Text(
+                  textAlign: TextAlign.center,
+                  'Falta R\$${lucroDesejado.toStringAsFixed(2)} para\natingir a meta',
+                  style: GoogleFonts.poppins(
+                              fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
+                ),
+                SizedBox(height: height * 0.02),
+                // Valor da meta de lucro
+                Text(
+                  'R\$${lucroDesejado.toStringAsFixed(2)}',
+                   style: GoogleFonts.poppins(
+                              fontSize: 30, fontWeight: FontWeight.w800, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
         ),
       );
     }
@@ -142,64 +200,59 @@ class _MetaLucroScreenState extends State<MetaLucroScreen> {
             },
           ),
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Visualize sua meta de lucro.',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+               SizedBox(height: height * 0.04),
+                Text(
+                  textAlign: TextAlign.center,
+                  'Visualize sua\nmeta de lucro.',
+                  style: GoogleFonts.poppins(
+                                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-              ),
-              SizedBox(height: 20),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Círculo de progresso
-                  SizedBox(
-                    width: 150,
-                    height: 150,
-                    child: CircularProgressIndicator(
-                      value: porcentagemProgresso / 100,
-                      strokeWidth: 8,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.greenAccent),
-                      backgroundColor: Colors.grey[800],
+                SizedBox(height: height * 0.08),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Círculo de progresso
+                    SizedBox(
+                       width: 250,
+                        height: 250,
+                      child: CircularProgressIndicator(
+                        value: porcentagemProgresso / 100,
+                        strokeWidth: 15,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+                        backgroundColor: Colors.grey[800],
+                      ),
                     ),
-                  ),
-                  // Texto no centro do círculo
-                  Text(
-                    '${porcentagemProgresso.toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                    // Texto no centro do círculo
+                    Text(
+                      '${porcentagemProgresso.toStringAsFixed(0)}%',
+                      style: GoogleFonts.poppins(
+                                fontSize: 32, fontWeight: FontWeight.w500, color: Colors.white),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              // Texto indicando quanto falta para atingir a meta
-              Text(
-                'Falta R\$${valorRestante.toStringAsFixed(2)} para atingir a meta',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
+                  ],
                 ),
-              ),
-              SizedBox(height: 5),
-              // Valor da meta de lucro
-              Text(
-                'R\$${lucroDesejado.toStringAsFixed(2)}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                SizedBox(height: height * 0.08),
+                // Texto indicando quanto falta para atingir a meta
+                Text(
+                  textAlign: TextAlign.center,
+                  'Falta R\$${valorRestante.toStringAsFixed(2)} para\natingir a meta',
+                  style: GoogleFonts.poppins(
+                                fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
                 ),
-              ),
-            ],
+                SizedBox(height: height * 0.02),
+                // Valor da meta de lucro
+                Text(
+                  'R\$${lucroDesejado.toStringAsFixed(2)}',
+                   style: GoogleFonts.poppins(
+                                fontSize: 30, fontWeight: FontWeight.w800, color: Colors.white),
+                ),
+              ],
+            ),
           ),
         ),
       );

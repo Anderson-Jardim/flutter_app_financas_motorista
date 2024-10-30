@@ -1,6 +1,7 @@
 
 import 'package:app_fingo/screens/dashboard.dart';
 import 'package:app_fingo/screens/login/welcome.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,12 +77,32 @@ class _LoginState extends State<Login> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [                 
-                      SizedBox(height: 20),
+                      SizedBox(height: height * 0.02),
 
                     Container(
                       width: 400,
                       height: 40, 
-                      child: Image.asset('assets/images/logo_02.png', alignment: Alignment.topLeft, ),
+                      child: Padding(
+          padding:  EdgeInsets.all(1.0),
+          child: Image(
+            image: CachedNetworkImageProvider(
+            maxWidth: 841,
+            maxHeight: 250,
+            logo02,     
+            ),
+            loadingBuilder: (context, child, loadingProgress){
+              if(loadingProgress == null){
+                return child;
+              }
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Colors.transparent,
+                ),
+              );
+            },
+            alignment: Alignment.topLeft,
+          ),
+        ),
                     ),
 
                       Container(        
@@ -221,7 +242,7 @@ class _LoginState extends State<Login> {
                             ),
                         ),
                       ),
-                      SizedBox(height: height * 0.05),
+                      SizedBox(height: height * 0.02),
                       
                     
                     ],

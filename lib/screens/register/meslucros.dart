@@ -70,7 +70,7 @@ class _MesLucrosState extends State<MesLucros> {
                 (route) => false,
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Mês Lucro atualizado com sucesso')),
+                SnackBar(content: Text('Dados atualizados com sucesso')),
               );
             }
           } else {
@@ -78,7 +78,7 @@ class _MesLucrosState extends State<MesLucros> {
             print('Resposta do servidor: ${updateResponse.body}');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao atualizar Mês Lucro: ${updateResponse.statusCode}')),
+                SnackBar(content: Text('Falha ao atualizar dados: ${updateResponse.statusCode}')),
               );
             }
           }
@@ -100,7 +100,7 @@ class _MesLucrosState extends State<MesLucros> {
                 (route) => false,
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Mes Lucros adicionado com sucesso')),
+                SnackBar(content: Text('Dados adicionados com sucesso')),
               );
             }
           } else {
@@ -108,7 +108,7 @@ class _MesLucrosState extends State<MesLucros> {
             print('Resposta do servidor: ${createResponse.body}');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao adicionar Mes Lucros: ${createResponse.statusCode}')),
+                SnackBar(content: Text('Falha ao adicionar dados: ${createResponse.statusCode}')),
               );
             }
           }
@@ -118,7 +118,7 @@ class _MesLucrosState extends State<MesLucros> {
         print('Resposta do servidor: ${checkResponse.body}');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Falha ao verificar Mes Lucros: ${checkResponse.statusCode}')),
+            SnackBar(content: Text('Falha ao verificar dados: ${checkResponse.statusCode}')),
           );
         }
       }
@@ -255,7 +255,14 @@ class _MesLucrosState extends State<MesLucros> {
                         controller: _meslucrosController,
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
-                        validator: (val) => val!.isEmpty ? 'Campo vazio' : null,
+                        validator: (val) {
+                           if (val!.isEmpty) {
+                          return 'Campo Vazio';
+                           } else if (val == 'R\$0,00') {
+                              return 'Valor inválido';
+                            }
+                            return null;
+                        },
                         decoration: kInputDecoration(''),
                       ),
                     ],

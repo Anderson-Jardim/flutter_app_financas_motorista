@@ -77,7 +77,7 @@ class _InfooneState extends State<Infoone> {
             if (mounted) {
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MesLucros()), (route) => false);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Infoone atualizado com sucesso')),
+                SnackBar(content: Text('Dados atualizados com sucesso')),
               );
             }
           } else {
@@ -85,7 +85,7 @@ class _InfooneState extends State<Infoone> {
             print('Resposta do servidor: ${updateResponse.body}');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao atualizar infoone: ${updateResponse.statusCode}')),
+                SnackBar(content: Text('Falha ao atualizar dados: ${updateResponse.statusCode}')),
               );
             }
           }
@@ -104,7 +104,7 @@ class _InfooneState extends State<Infoone> {
             if (mounted) {
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MesLucros()), (route) => false);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Infoone adicionado com sucesso')),
+                SnackBar(content: Text('Dados adicionados com sucesso')),
               );
             }
           } else {
@@ -112,7 +112,7 @@ class _InfooneState extends State<Infoone> {
             print('Resposta do servidor: ${createResponse.body}');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao adicionar infoone: ${createResponse.statusCode}')),
+                SnackBar(content: Text('Falha ao adicionar dados: ${createResponse.statusCode}')),
               );
             }
           }
@@ -122,7 +122,7 @@ class _InfooneState extends State<Infoone> {
         print('Resposta do servidor: ${checkResponse.body}');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Falha ao verificar infoone: ${checkResponse.statusCode}')),
+            SnackBar(content: Text('Falha ao verificar dados: ${checkResponse.statusCode}')),
           );
         }
       }
@@ -236,7 +236,14 @@ class _InfooneState extends State<Infoone> {
                         controller: _valorGasolinaController,
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
-                        validator: (val) => val!.isEmpty ? 'Campo vazio' : null,
+                        validator:  (val) {
+                           if (val!.isEmpty) {
+                          return 'Campo Vazio';
+                           } else if (val == 'R\$0,00') {
+                              return 'Valor inválido';
+                            }
+                            return null;
+                        },
                         decoration: kInputDecoration(''),
                       ),
                       SizedBox(height: height * 0.04),
@@ -314,7 +321,14 @@ class _InfooneState extends State<Infoone> {
                         controller: _kmLitroController,
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
-                        validator: (val) => val!.isEmpty ? 'Campo Vazio' : null,
+                        validator: (val) {
+                           if (val!.isEmpty) {
+                          return 'Campo Vazio';
+                           } else if (val == '0.00') {
+                              return 'Valor inválido';
+                            }
+                            return null;
+                        },
                         decoration: kInputDecoration(''),
                       ),
                     ],

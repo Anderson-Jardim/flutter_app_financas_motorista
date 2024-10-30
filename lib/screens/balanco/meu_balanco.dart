@@ -144,42 +144,17 @@ class _BalancoState extends State<Balanco> {
     final size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
-
     if (lucroCorrida == null || lucroCorrida!.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75)),
-            onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => Dashboard()),
-                  (route) => false);
-            },
-          ),
-        ),
-        backgroundColor: Color(0xFF171f20),
+      return loading ?
+      Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
-
-          child: Text(
-            "Você ainda não possui lucro \n (Realize a sua primeira corrida para contabilizar)", 
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(fontSize: 20, 
-            fontWeight: FontWeight.bold, 
-            color: Colors.white),
-            ),
-        ),
-      );
-    }
-
-    if (totalExpense == null || lucroCorrida!.isNotEmpty) {
-      lucroCorridaModel segundoLucro = lucroCorrida![0];
-     /*  lucroCorridaModel gastoLucro = lucroCorrida![0]; */
-      double lucroAtual = double.tryParse(segundoLucro.total_lucro ?? '0') ?? 0;
-      double gastoAtual = double.tryParse(segundoLucro.total_gasto ?? '0') ?? 0;
-
-      return Scaffold(
+              child: CircularProgressIndicator(
+              color: Color(0xFF00ff75),
+              backgroundColor: Color(0xFF171f20),
+            )),
+      )
+      : Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -193,39 +168,59 @@ class _BalancoState extends State<Balanco> {
             },
           ),
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: height * 0.05),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        body: Column(
             children: [
-              Text(
-                'Suas finanças',
-                style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: width * 0.1, vertical: height * 0.01),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Suas finanças',
+                        style: GoogleFonts.poppins(
+                            fontSize: 33, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'descomplicadas.',
+                        style: GoogleFonts.poppins(
+                            fontSize: 33,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF00ff75)),
+                      ),
+                      SizedBox(height: height * 0.02),
+                      Text(
+                        'Veja a divisão completa dos seus ganhos.',
+                        style: GoogleFonts.poppins(
+                            fontSize: 16, color: Colors.grey),
+                      ),
+                      SizedBox(height: height * 0.04),
+                      _buildInfoCard(
+                          width, 'Gastos', currencyFormat.format(0), Colors.grey[200]!),
+                      SizedBox(height: height * 0.02),
+                      _buildInfoCard(
+                          width, 'Lucro', currencyFormat.format(0), Colors.grey[200]!),
+                      SizedBox(height: height * 0.05),
+                      Divider(
+                        color: Colors.black,
+                        thickness: 1,
+                      ),
+                      SizedBox(height: height * 0.02),
+                      _buildSaidasList(width, height),
+                    ],
+                  ),
+                ),
               ),
-              Text(
-                'descomplicadas.',
-                style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF00ff75)),
-              ),
-              SizedBox(height: height * 0.02),
-              Text(
-                'Veja a divisão completa dos seus ganhos.',
-                style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
-              ),
-              SizedBox(height: height * 0.04),
-              _buildInfoCard(width, 'Gastos', currencyFormat.format(gastoAtual), Colors.grey[200]!),
-              SizedBox(height: height * 0.02),
-              _buildInfoCard(width, 'Lucro', currencyFormat.format(lucroAtual), Colors.grey[200]!),
-              SizedBox(height: height * 0.04),
-              // Substituição pela nova lista de saídas
-              _buildSaidasList(width),
-              SizedBox(height: height * 0.04),
-              Center(
+              Padding(
+                padding: EdgeInsets.only(bottom: height * 0.02),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     primary: Colors.black,
-                    padding: EdgeInsets.symmetric(vertical: height * 0.02, horizontal: width * 0.2),
+                    padding: EdgeInsets.symmetric(
+                        vertical: height * 0.02, horizontal: width * 0.2),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   onPressed: () {
@@ -235,22 +230,124 @@ class _BalancoState extends State<Balanco> {
                   },
                   child: Text(
                     'Adicionar saída',
-                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 16),
+                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 19),
                   ),
                 ),
               ),
             ],
           ),
+      );
+    }
+
+    if (totalExpense == null || lucroCorrida!.isNotEmpty) {
+      lucroCorridaModel segundoLucro = lucroCorrida![0];
+      double lucroAtual = double.tryParse(segundoLucro.total_lucro ?? '0') ?? 0;
+      double gastoAtual = double.tryParse(segundoLucro.total_gasto ?? '0') ?? 0;
+
+return loading ?
+      Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+              child: CircularProgressIndicator(
+              color: Color(0xFF00ff75),
+              backgroundColor: Color(0xFF171f20),
+            )),
+      )
+      : Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75)),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Dashboard()),
+                  (route) => false);
+            },
+          ),
         ),
+        body: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: width * 0.1, vertical: height * 0.01),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Suas finanças',
+                        style: GoogleFonts.poppins(
+                            fontSize: 33, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'descomplicadas.',
+                        style: GoogleFonts.poppins(
+                            fontSize: 33,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF00ff75)),
+                      ),
+                      SizedBox(height: height * 0.02),
+                      Text(
+                        'Veja a divisão completa dos seus ganhos.',
+                        style: GoogleFonts.poppins(
+                            fontSize: 16, color: Colors.grey),
+                      ),
+                      SizedBox(height: height * 0.04),
+                      _buildInfoCard(
+                          width, 'Gastos', currencyFormat.format(gastoAtual), Colors.grey[200]!),
+                      SizedBox(height: height * 0.02),
+                      _buildInfoCard(
+                          width, 'Lucro', currencyFormat.format(lucroAtual), Colors.grey[200]!),
+                      SizedBox(height: height * 0.05),
+                      Divider(
+                        color: Colors.black,
+                        thickness: 1,
+                      ),
+                      SizedBox(height: height * 0.02),
+                      _buildSaidasList(width, height),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: height * 0.02),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.black,
+                    padding: EdgeInsets.symmetric(
+                        vertical: height * 0.02, horizontal: width * 0.2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => AdicionarSaida()),
+                        (route) => false);
+                  },
+                  child: Text(
+                    'Adicionar saída',
+                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 19),
+                  ),
+                ),
+              ),
+            ],
+          ),
       );
     } else {
       return Scaffold(
         backgroundColor: Color(0xFF171f20),
         body: Center(
           child: Text(
-            'Nenhum dado disponível.',
-            style: TextStyle(color: Colors.white),
-          ),
+            "Sem dados", 
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(fontSize: 20, 
+            fontWeight: FontWeight.bold, 
+            color: Colors.white),
+            ),
+            
         ),
       );
     }
@@ -274,7 +371,7 @@ class _BalancoState extends State<Balanco> {
           SizedBox(height: 10),
           Text(
             amount,
-            style: GoogleFonts.poppins(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+            style: GoogleFonts.poppins(color: Colors.black, fontSize: 27, fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -282,19 +379,61 @@ class _BalancoState extends State<Balanco> {
   }
 
   // Novo método para construir a lista de saídas
-Widget _buildSaidasList(double width) {
+Widget _buildSaidasList(double width, double height) {
   return ListView.builder(
+   
     shrinkWrap: true,
     physics: NeverScrollableScrollPhysics(),
     itemCount: _saidas.length,
     itemBuilder: (context, index) {
-      print('Exibindo saída: ${_saidas[index].nome_saida}'); // Log da saída exibida
-      return ListTile(
-        title: Text(_saidas[index].nome_saida.toString()),
-        subtitle: Text(
-          'Lucro: ${_saidas[index].saida_lucro} | Tipo: ${_saidas[index].tipo} | Data: ${_saidas[index].createdAt}',
+      
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: height * 0.01),
+      child: Container(
+   padding: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: height * 0.01),
+      decoration: BoxDecoration(
+      border: Border.all(
+        color: Colors.black,
+        width: 1.2
+      ),
+      borderRadius: BorderRadius.circular(45),
+  ),
+  
+        child: Row(
+          
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_saidas[index].nome_saida.toString(), 
+                style: GoogleFonts.poppins(
+                  color: Colors.black, 
+                  fontSize: 20, 
+                  fontWeight: FontWeight.w400,
+                  )
+                ),
+                Text(_saidas[index].createdAt.toString(), 
+                style: GoogleFonts.poppins(
+                  color: Colors.grey, 
+                  fontSize: 13, 
+                  fontWeight: FontWeight.w400,
+                  )
+                ),
+
+              ],
+            ),
+            Row(
+              
+              children: [
+                Text("R\$${_saidas[index].saida_lucro.toString()}", style: GoogleFonts.poppins(color: Colors.red, fontSize: 19, fontWeight: FontWeight.w400,)),
+              ],
+            )
+          ],
         ),
-      );
+        
+      ),
+    );
     },
   );
 }

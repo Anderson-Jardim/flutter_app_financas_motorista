@@ -34,14 +34,12 @@ class _HistCorridasState extends State<HistCorridas> {
     thousandSeparator: '.',
   );
 
-
-
-  bool loading = true;
+ bool loading = true;
  
     List<LerCorridaModel> _saidas = [];
   final NumberFormat currencyFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
 
-  @override
+   @override
   void dispose() {
     moneyController.dispose();
     amountController.dispose();
@@ -86,14 +84,23 @@ void getlerCorrida() async {
     final size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
+    if (_saidas == null || _saidas!.isEmpty) {
 
-    if (_saidas == null || _saidas.isEmpty) {
-      return Scaffold(
+      return loading ?
+       Scaffold(
+        backgroundColor: Color(0xFF171f20),
+        body: Center(
+              child: CircularProgressIndicator(
+              color: Color(0xFF00ff75),
+              backgroundColor: Color(0xFF171f20),
+            )),
+      )
+      : Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75)),
+            icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75),),
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => Dashboard()),
@@ -103,6 +110,7 @@ void getlerCorrida() async {
         ),
         backgroundColor: Color(0xFF171f20),
         body: Center(
+
           child: Text(
             "Você ainda não possui histórico \n (Realize a sua primeira corrida para contabilizar)", 
             textAlign: TextAlign.center,
@@ -112,13 +120,23 @@ void getlerCorrida() async {
             ),
         ),
       );
-    }
+    } 
 
-   
+    
       
       
 
-      return Scaffold(
+
+      return loading ? 
+      Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+              child: CircularProgressIndicator(
+              color: Color(0xFF00ff75),
+              backgroundColor: Color(0xFF171f20),
+            )),
+      )
+      : Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -133,45 +151,35 @@ void getlerCorrida() async {
           ),
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.1, vertical: height * 0.05),
+          padding: EdgeInsets.symmetric(horizontal: width * 0.06, vertical: height * 0.01),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+        
               Text(
-                'Suas finanças',
-                style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold),
+                'Todas as corridas.',
+                style: GoogleFonts.poppins(fontSize: 33, fontWeight: FontWeight.bold),
               ),
               Text(
-                'descomplicadas.',
-                style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF00ff75)),
+                'Todos os ganhos.',
+                style: GoogleFonts.poppins(fontSize: 33, fontWeight: FontWeight.bold, color: Colors.black),
               ),
               SizedBox(height: height * 0.02),
               Text(
-                'Veja a divisão completa dos seus ganhos.',
-                style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
+                'Cada card mostra o valor total da corrida e classificação de lucro.',
+                style: GoogleFonts.poppins(fontSize: 18, color: Color(0xFF171F20)),
               ),
-              SizedBox(height: height * 0.04), /*
-              _buildInfoCard(width, 'Gastos', currencyFormat.format(gastoAtual), Colors.grey[200]!),
-              SizedBox(height: height * 0.02),
-              _buildInfoCard(width, 'Lucro', currencyFormat.format(lucroAtual), Colors.grey[200]!),
-              SizedBox(height: height * 0.04), */
+              
+              SizedBox(height: height * 0.03),
+              
+              
+
+              SizedBox(height: height * 0.02,),
               // Substituição pela nova lista de saídas
-              _buildSaidasList(width),
-              SizedBox(height: height * 0.04),
-              Center(
-                
-              ),
+              _buildSaidasList(width,height),
+              SizedBox(height: height * 0.05),
+             
             ],
-          ),
-        ),
-      );
-  
-      return Scaffold(
-        backgroundColor: Color(0xFF171f20),
-        body: Center(
-          child: Text(
-            'Nenhum dado disponível.',
-            style: TextStyle(color: Colors.white),
           ),
         ),
       );
@@ -196,7 +204,7 @@ void getlerCorrida() async {
           SizedBox(height: 10),
           Text(
             amount,
-            style: GoogleFonts.poppins(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+            style: GoogleFonts.poppins(color: Colors.black, fontSize: 27, fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -204,19 +212,78 @@ void getlerCorrida() async {
   }
 
   // Novo método para construir a lista de saídas
-Widget _buildSaidasList(double width) {
+Widget _buildSaidasList(double width, double height) {
   return ListView.builder(
+   
     shrinkWrap: true,
     physics: NeverScrollableScrollPhysics(),
     itemCount: _saidas.length,
     itemBuilder: (context, index) {
-      print('Exibindo saída: ${_saidas[index].tipo_corrida}'); // Log da saída exibida
-      return ListTile(
-        title: Text(_saidas[index].tipo_corrida.toString()),
-        subtitle: Text(
-          'Lucro: ${_saidas[index].valor} | Data: ${_saidas[index].createdAt}',
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: height * 0.02),
+      child: Container(
+   padding: EdgeInsets.symmetric(horizontal: width * 0.05, vertical: height * 0.02),
+      decoration: BoxDecoration(
+      border: Border.all(
+        color: Colors.black,
+        width: 1.2
+      ),
+      borderRadius: BorderRadius.circular(45),
+  ),
+  
+        child: Row(
+          
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.02, vertical: height * 0.001),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+      border: Border.all(
+        color: Colors.black,
+        width: 1.2
+      ),
+      borderRadius: BorderRadius.circular(45),
+  ),
+                  child: Text(_saidas[index].tipo_corrida.toString(), 
+                  style: GoogleFonts.poppins(
+                    color: Colors.white, 
+                    fontSize: 17, 
+                    fontWeight: FontWeight.w500,
+                    )
+                  ),
+                ),
+                SizedBox(height: height * 0.01),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.02, vertical: height * 0.001),
+                  child: Text(_saidas[index].createdAt.toString(), 
+                  style: GoogleFonts.poppins(
+                    color: Colors.grey, 
+                    fontSize: 13, 
+                    fontWeight: FontWeight.w500,
+                    )
+                  ),
+                ),
+
+              ],
+            ),
+            Column(
+              children: [
+                
+                Text("Valor total", style: GoogleFonts.poppins(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500,)),
+                Text("R\$${_saidas[index].valor.toString()}", style: GoogleFonts.poppins(color: Color(0xFF157A31), fontSize: 19, fontWeight: FontWeight.w500,)),
+             
+              ],
+            ),
+          
+          ],
         ),
-      );
+        
+      ),
+    );
     },
   );
 }

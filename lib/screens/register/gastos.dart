@@ -76,7 +76,7 @@ class _GastosPageState extends State<GastosPage> {
                 (route) => false,
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Gastos atualizado com sucesso')),
+                SnackBar(content: Text('Dados atualizados com sucesso')),
               );
             }
           } else {
@@ -84,7 +84,7 @@ class _GastosPageState extends State<GastosPage> {
             print('Resposta do servidor: ${updateResponse.body}');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao atualizar Gastos: ${updateResponse.statusCode}')),
+                SnackBar(content: Text('Falha ao atualizar os gastos, tente novamente')),
               );
             }
           }
@@ -106,7 +106,7 @@ class _GastosPageState extends State<GastosPage> {
                 (route) => false,
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Gastos adicionado com sucesso')),
+                SnackBar(content: Text('Dados adicionados com sucesso')),
               );
             }
           } else {
@@ -114,7 +114,7 @@ class _GastosPageState extends State<GastosPage> {
             print('Resposta do servidor: ${createResponse.body}');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao adicionar Gastos: ${createResponse.statusCode}')),
+                SnackBar(content: Text('Para continuar, adicione os seus gastos')),
               );
             }
           }
@@ -124,7 +124,7 @@ class _GastosPageState extends State<GastosPage> {
         print('Resposta do servidor: ${checkResponse.body}');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Falha ao verificar Gastos: ${checkResponse.statusCode}')),
+            SnackBar(content: Text('Falha ao verificar dados: ${checkResponse.statusCode}')),
           );
         }
       }
@@ -485,8 +485,6 @@ class _GastosPageState extends State<GastosPage> {
                   SizedBox(height: height * 0.05),
              
              
-                 
-                
               ],
             ),
           ),

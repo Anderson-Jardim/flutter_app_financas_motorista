@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/balanco/meu_balanco.dart';
 import 'package:app_fingo/screens/calculadora/info_calc.dart';
@@ -9,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../services/classcorridas_service.dart';
+import '../services/meslucro_service.dart';
 import 'historico/lista_historico.dart';
 import 'meta_lucro/meta_lucro.dart';
 import '../models/api_response.dart';
@@ -85,11 +86,40 @@ Future<void> _refreshData() async {
     getLucroCorrida();
   }
 
+
+  void checkUserData() async {
+  ApiResponse response = await getMeslucroDetail(); // Função que verifica dados em 'mesLucro'
+  ApiResponse infones = await getInfooneDetail(); 
+  ApiResponse gastos = await getExpensesDetail(); 
+  ApiResponse classcorridas = await getclassCorridasDetail(); 
+  
+  // Verifica se response.data é uma lista e se está vazia
+  if (
+    response.error == null && response.data != null && response.data is List && (response.data as List).isNotEmpty &&
+    infones.error == null && infones.data != null && infones.data is List && (infones.data as List).isNotEmpty &&
+    gastos.error == null && gastos.data != null && gastos.data is List && (gastos.data as List).isNotEmpty &&
+    classcorridas.error == null && classcorridas.data != null && classcorridas.data is List && (classcorridas.data as List).isNotEmpty
+  ) {
+    // Dados encontrados, carregue o usuário e prossiga para o dashboard
+    getUser();
+    getLucroCorrida();
+  } else {
+    // Redireciona para a tela de login se não houver dados em 'mesLucro'
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => HomeScreen()), 
+      (route) => false
+    );
+  }
+}
+
+
+
   @override
   void initState() {
     super.initState();
-    getUser();
-    getLucroCorrida();
+    /* getUser();
+    getLucroCorrida(); */
+    checkUserData();
   }
   @override
   Widget build(BuildContext context) {

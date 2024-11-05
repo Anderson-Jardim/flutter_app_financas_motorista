@@ -81,13 +81,12 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
   } */
 
   Future<void> enviarSaidaAdd() async {
-    final url = Uri.parse(saidaLucroAdd); // URL da API
-    String token = await getToken(); // Recuperar o token de autenticação
+    final url = Uri.parse(saidaLucroAdd);
+    String token = await getToken();
 
-    // Verifica se o formulário está validado corretamente
     if (_formKey.currentState!.validate()) {
       setState(() {
-        loading = true; // Mostra o estado de carregamento
+        loading = true;
       });
 
       try {
@@ -101,27 +100,34 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token', // Adiciona o token no cabeçalho
+            'Authorization': 'Bearer $token',
           },
           body: jsonEncode(data),
         );
 
         if (response.statusCode == 200) {
-          // Dados enviados com sucesso
           print('Saída enviada com sucesso');
           ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Saída Adicionada 2')),
-              );
+            SnackBar(content: Text('Saída adicionada')),
+          );
+
+          if (mounted) { // Verifica se o widget ainda está na árvore
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => Balanco()),
+              (route) => false,
+            );
+          }
         } else {
-          // Algo deu errado
           print('Erro ao enviar saída: ${response.body}');
         }
       } catch (error) {
         print('Erro na solicitação: $error');
       } finally {
-        setState(() {
-          loading = false; // Para o estado de carregamento
-        });
+        if (mounted) { // Verifica se o widget ainda está na árvore
+          setState(() {
+            loading = false;
+          });
+        }
       }
     }
   }
@@ -149,7 +155,8 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.1),
+          padding: EdgeInsets.symmetric(
+                      horizontal: width * 0.1, vertical: height * 0.01),
           child: Form(
             key: _formKey,
             child: Column(
@@ -160,7 +167,7 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                   text: TextSpan(
                     text: 'Adicione tudo\n',
                     style: GoogleFonts.poppins(
-                      fontSize: 24,
+                      fontSize: 33,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -168,7 +175,7 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                       TextSpan(
                         text: 'o que sair.',
                         style: GoogleFonts.poppins(
-                          fontSize: 24,
+                          fontSize: 33,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF00ff75),
                         ),
@@ -177,25 +184,36 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                   ),
                 ),
                 SizedBox(height: height * 0.04),
-                TextField(
+                TextFormField(
                   controller: nomeSaidaController,
+                  validator: (val) => val!.isEmpty ? 'Campo Vazio' : null,
                   decoration: InputDecoration(
                     labelText: 'Tipo de saída',
                     labelStyle: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
                       color: Colors.grey,
                     ),
                     border: UnderlineInputBorder(),
                   ),
                 ),
                 SizedBox(height: height * 0.02),
-                TextField(
+                TextFormField(
                   controller: _valorSaidaController,
+                  validator:  (val) {
+                           if (val!.isEmpty) {
+                          return 'Campo Vazio';
+                           } else if (val == 'R\$0,00') {
+                              return 'Valor inválido';
+                            }
+                            return null;
+                        },
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: 'Valor da saída',
                     labelStyle: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
                       color: Colors.grey,
                     ),
                     border: UnderlineInputBorder(),
@@ -207,12 +225,13 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                   children: [
                     Expanded(
                       child: CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
+                        /* contentPadding: EdgeInsets.zero, */
                         title: Text(
                           'Gasto',
                           style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            color: Colors.black,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                      color: Colors.grey,
                           ),
                         ),
                         value: isGastoChecked,
@@ -228,12 +247,14 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                     ),
                     Expanded(
                       child: CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
+                        /* contentPadding: EdgeInsets.zero, */
+                        
                         title: Text(
                           'Lucro',
                           style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            color: Colors.black,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                      color: Colors.grey,
                           ),
                         ),
                         value: isLucroChecked,
@@ -249,25 +270,41 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                     ),
                   ],
                 ),
-                SizedBox(height: height * 0.04),
+                SizedBox(height: height * 0.07),
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: Colors.black,
                       padding: EdgeInsets.symmetric(
                         vertical: height * 0.02,
-                        horizontal: width * 0.3,
+                        horizontal: width * 0.2,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     onPressed: loading
                         ? null
-                        : () {
-                          enviarSaidaAdd();
-                            /* enviarSaida(); */
-                          },
+                        : () 
+                          async {
+                    if (_formKey.currentState!.validate()&&
+                        (isGastoChecked || isLucroChecked)) 
+                        {
+                     await enviarSaidaAdd();
+                      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Balanco()),
+          (route) => false,
+        );
+
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                         SnackBar(
+                                  content: Text('Por favor, complete todos os campos.'),
+                                ),
+                      );
+                    }
+                  },
+
                     child: loading
                         ? CircularProgressIndicator(
                             color: Colors.white,
@@ -276,7 +313,7 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                             'Adicionar',
                             style: GoogleFonts.poppins(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 19,
                             ),
                           ),
                   ),

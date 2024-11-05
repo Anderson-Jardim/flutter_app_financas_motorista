@@ -84,27 +84,35 @@ class _BalancoState extends State<Balanco> {
   void getLucroCorrida() async {
     try {
       ApiResponse response = await getlucroCorridaDetail();
-      if (response.error == null) {
+      if (response.error == null && mounted) {
         setState(() {
           lucroCorrida = response.data as List<lucroCorridaModel>;
           loading = false;
         });
       } else if (response.error == unauthorized) {
-        logout().then((value) => {
-          Navigator.of(context).pushAndRemoveUntil(
+        logout().then((value) {
+          if (mounted) {
+            Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => HomeScreen()),
-              (route) => false)
+              (route) => false,
+            );
+          }
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${response.error}')));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${response.error}')));
+        }
       }
     } catch (e, stacktrace) {
       log("Erro ao carregar os dados de lucroCorrida: $e", stackTrace: stacktrace);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao carregar os dados de lucroCorrida')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erro ao carregar os dados de lucroCorrida')));
+      }
     }
   }
+  
   void getSaidas() async {
   ApiResponse response = await getSaidasDetail(); // Supondo que você tenha uma função que busca as saídas
   if (response.error == null && mounted) {

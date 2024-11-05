@@ -97,11 +97,11 @@ class _MetaLucroScreenState extends State<MetaLucroScreen> {
         ),
       );
     }
-    meslucroModel primeiroLucro = lucroMes![0];
-        double lucroDesejado = double.tryParse(primeiroLucro.qtd_mes_lucros ?? '0') ?? 0;
 
     // Verifique se `lucroMes` e `lucroCorrida` não são nulos e contêm elementos
-    if (lucroMes == null || lucroCorrida == null || lucroMes!.isEmpty || lucroCorrida!.isEmpty) {
+    if (lucroCorrida == null || lucroCorrida!.isEmpty) {
+    meslucroModel primeiroLucro = lucroMes![0];
+        double lucroDesejado = double.tryParse(primeiroLucro.qtd_mes_lucros ?? '0') ?? 0;
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,

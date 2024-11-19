@@ -25,7 +25,7 @@ class _InfooneState extends State<Infoone> {
   List<InfooneModel> infooneList = [];
   bool loading = false;
 
-  final MoneyMaskedTextController _valorGasolinaController = MoneyMaskedTextController(
+/*   final MoneyMaskedTextController _valorGasolinaController = MoneyMaskedTextController(
     leftSymbol: 'R\$',
     decimalSeparator: ',',
     thousandSeparator: '.',
@@ -33,7 +33,7 @@ class _InfooneState extends State<Infoone> {
   final MoneyMaskedTextController _kmLitroController = MoneyMaskedTextController(
     decimalSeparator: '.',
     thousandSeparator: ',',
-  );
+  ); */
   TextEditingController diasTrabController = TextEditingController();
   TextEditingController qtdCorridasController = TextEditingController();
 
@@ -43,10 +43,10 @@ class _InfooneState extends State<Infoone> {
 
     // Dados para enviar
     final Map<String, dynamic> data = {
-      'valor_gasolina': _valorGasolinaController.numberValue,
+      /* 'valor_gasolina': _valorGasolinaController.numberValue, */
       'dias_trab': int.parse(diasTrabController.text),
       'qtd_corridas': int.parse(qtdCorridasController.text),
-      'km_litro': _kmLitroController.numberValue,
+      /* 'km_litro': _kmLitroController.numberValue, */
     };
 
     try {
@@ -147,10 +147,10 @@ class _InfooneState extends State<Infoone> {
           // Preenchendo os controladores de texto com dados do primeiro item da lista, se houver
           if (infooneList.isNotEmpty) {
             InfooneModel firstItem = infooneList[0];
-            _valorGasolinaController.text = 'R\$${firstItem.valorGasolina ?? ''}';
+            /* _valorGasolinaController.text = 'R\$${firstItem.valorGasolina ?? ''}'; */
             diasTrabController.text = firstItem.diasTrab?.toString() ?? '';
             qtdCorridasController.text = firstItem.qtdCorridas?.toString() ?? '';
-            _kmLitroController.text = firstItem.kmLitro ?? '';
+            /* _kmLitroController.text = firstItem.kmLitro ?? ''; */
           }
         });
       }
@@ -214,7 +214,7 @@ class _InfooneState extends State<Infoone> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
-                      Container(
+                      /* Container(
                         alignment: Alignment.center,
                         child: Text(
                           'Qual o preço da gasolina no seu posto?',
@@ -227,8 +227,8 @@ class _InfooneState extends State<Infoone> {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      SizedBox(height: height * 0.02),
-                      TextFormField(
+                      SizedBox(height: height * 0.02), */
+                      /* TextFormField(
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           textStyle: TextStyle(color: Colors.white),
@@ -245,7 +245,7 @@ class _InfooneState extends State<Infoone> {
                             return null;
                         },
                         decoration: kInputDecoration(''),
-                      ),
+                      ), */
                       SizedBox(height: height * 0.04),
                       Container(
                         alignment: Alignment.center,
@@ -299,7 +299,7 @@ class _InfooneState extends State<Infoone> {
                         decoration: kInputDecoration(''),
                       ),
                       SizedBox(height: height * 0.04),
-                      Container(
+                     /*  Container(
                         alignment: Alignment.center,
                         child: Text(
                           'Quantos Km seu carro faz com um litro\nde gasolina?',
@@ -312,8 +312,8 @@ class _InfooneState extends State<Infoone> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(height: height * 0.02),
-                      TextFormField(
+                      SizedBox(height: height * 0.02), */
+                      /* TextFormField(
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           textStyle: TextStyle(color: Colors.white),
@@ -330,7 +330,7 @@ class _InfooneState extends State<Infoone> {
                             return null;
                         },
                         decoration: kInputDecoration(''),
-                      ),
+                      ), */
                     ],
                   ),
                 ),

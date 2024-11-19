@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-const baseURL = 'http://192.168.0.118:8000/api';
-/* const baseURL = 'https://506e-190-89-190-130.ngrok-free.app/api'; */
+/* const baseURL = 'http://192.168.0.118:8000/api'; */
+ const baseURL = 'https://ce09-190-89-188-0.ngrok-free.app/api';  
 const loginURL = baseURL + '/login';
 const registerURL = baseURL + '/register';
 const expensesURL = baseURL + '/expenses';
@@ -23,10 +23,10 @@ const getLerCorrida = baseURL + '/lercorrida';
 const logo01 = baseURL + '/images/logo_01.png';
 const logo02 = baseURL + '/images/logo_02.png';
 
-// ----- Errors -----
-const serverError = 'Server error';
-const unauthorized = 'Unauthorized';
-const somethingWentWrong = 'Something went wrong, try again!';
+// ----- Errors ----- 
+const serverError = 'Erro no Servidor';
+const unauthorized = 'Não Autorizado';
+const somethingWentWrong = 'Algo deu errado, tente novamente!';
 
 
 // --- input decoration

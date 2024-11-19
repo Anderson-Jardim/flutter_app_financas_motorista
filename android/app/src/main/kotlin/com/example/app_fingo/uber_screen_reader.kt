@@ -128,11 +128,11 @@ private fun extractDistanceValue(text: String): Double? {
         val token = sharedPreferences.getString("flutter.token", null)
 
         if (token != null) {
-            val urlGastosMensais = "http://192.168.0.118:8000/api/expenses"
-            val urlInfoones = "http://192.168.0.118:8000/api/infoone"
-            val urlClasscorridas = "http://192.168.0.118:8000/api/classcorridas"
-            val urlApi = "http://192.168.0.118:8000/api/lercorrida"
-            val urlApilucro = "http://192.168.0.118:8000/api/monthly-earnings"
+            val urlGastosMensais = "https://ce09-190-89-188-0.ngrok-free.app/api/expenses"
+            val urlInfoones = "https://ce09-190-89-188-0.ngrok-free.app/api/infoone"
+            val urlClasscorridas = "https://ce09-190-89-188-0.ngrok-free.app/api/classcorridas"
+            val urlApi = "https://ce09-190-89-188-0.ngrok-free.app/api/lercorrida"
+            val urlApilucro = "https://ce09-190-89-188-0.ngrok-free.app/api/monthly-earnings"
 
             val requestGastos = Request.Builder()
                 .url(urlGastosMensais)
@@ -242,6 +242,8 @@ private fun extractDistanceValue(text: String): Double? {
 
                                                 val requestBodyLucro = FormBody.Builder()
                                                     .add("total_lucro", totalLucro.toString())
+                                                    .add("total_gasto", totalCusto.toString())
+                                                    .add("valor_corrida", decimalValue.toString())
                                                     .build()
 
                                                 val requestLucro = Request.Builder()
@@ -335,7 +337,7 @@ private fun extractDistanceValue(text: String): Double? {
         // Remover a notificação após 4 segundos
         Handler(Looper.getMainLooper()).postDelayed({
             windowManager.removeView(view)
-        }, 4000)
+        }, 5000)
     } catch (e: Exception) {
         Log.e("TAG", "Erro: ${e.message}")
     }

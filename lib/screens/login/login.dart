@@ -127,7 +127,7 @@ class _LoginState extends State<Login> {
                           style: TextStyle(color: Colors.grey),
                           keyboardType: TextInputType.emailAddress,
                           controller: txtEmail,
-                          validator: (val) => val!.isEmpty ? 'Invalid email address' : null,
+                          validator: (val) => val!.isEmpty ? 'Email ou celular inválidos' : null,
                           decoration: InputDecoration(
                             
                            labelText: 'E-mail ou celular',

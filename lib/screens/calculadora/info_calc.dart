@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../dashboard.dart';
 
@@ -35,18 +36,19 @@ class _CalculadoraLucroScreenState extends State<CalculadoraLucroScreen> {
           children: <Widget>[
             Text(
               'Calcule o lucro',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+            style: GoogleFonts.poppins(
+                      fontSize: 33,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
             ),
             Text(
               'de cada corrida',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
+             style: GoogleFonts.poppins(
+                      fontSize: 33,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF00ff75),
+                    ),
             ),
             SizedBox(height: 16),
             Text(

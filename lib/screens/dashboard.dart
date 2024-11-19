@@ -481,9 +481,9 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
             
                             }),
                             DashboardButton(title: 'Calculadora', onTap: (){
-                               Navigator.of(context).pushAndRemoveUntil(
+                               /* Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(builder: (context) => CalculadoraLucroScreen()), 
-                              (route) => false);
+                              (route) => false); */
                             },),
                           ],
                         ),

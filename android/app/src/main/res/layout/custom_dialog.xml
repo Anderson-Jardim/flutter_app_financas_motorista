@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/image_view_corrida"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="end"
         android:scaleType="fitCenter"
          android:src="@drawable/bandeiraouro"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:layout_gravity="left"
         android:paddingLeft="6dp"/>
 
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
-        android:textSize="27sp"
+        android:textSize="23sp"
         android:text="13km/R$2,75"
         android:layout_gravity="left"
         android:paddingLeft="6dp"/>

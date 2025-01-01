@@ -190,6 +190,7 @@ class _BalancoState extends State<Balanco> {
                         style: GoogleFonts.poppins(
                             fontSize: 33, fontWeight: FontWeight.bold),
                       ),
+                      SizedBox(height: height * 0.02),
                       Text(
                         'descomplicadas.',
                         style: GoogleFonts.poppins(
@@ -411,30 +412,50 @@ Widget _buildSaidasList(double width, double height) {
           
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_saidas[index].nome_saida.toString(), 
-                style: GoogleFonts.poppins(
-                  color: Colors.black, 
-                  fontSize: 20, 
-                  fontWeight: FontWeight.w400,
-                  )
-                ),
-                Text(_saidas[index].createdAt.toString(), 
-                style: GoogleFonts.poppins(
-                  color: Colors.grey, 
-                  fontSize: 13, 
-                  fontWeight: FontWeight.w400,
-                  )
-                ),
+            Container(
+              constraints: BoxConstraints(
+        maxWidth: width * 0.3, // Ajusta o espaço máximo para exibição
+      ),
+              child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(_saidas[index].nome_saida.toString(), 
+                  style: GoogleFonts.poppins(
+                    color: Colors.black, 
+                    fontSize: 18, 
+                    fontWeight: FontWeight.w400,
+                    ),
+                    overflow: TextOverflow.ellipsis, // Adiciona os "..." quando necessário
+                  ),
+                  Text(_saidas[index].createdAt.toString(), 
+                  style: GoogleFonts.poppins(
+                    color: Colors.grey, 
+                    fontSize: 13, 
+                    fontWeight: FontWeight.w400,
+                    ),
+                    overflow: TextOverflow.ellipsis, // Adiciona os "..." quando necessário
+                  ),
 
-              ],
+                ],
+              ),
             ),
             Row(
               
               children: [
-                Text("R\$${_saidas[index].saida_lucro.toString()}", style: GoogleFonts.poppins(color: Colors.red, fontSize: 19, fontWeight: FontWeight.w400,)),
+                Container(
+                  constraints: BoxConstraints(
+        maxWidth: width * 0.2, // Ajusta o espaço máximo para exibição
+      ),
+                  child: Text(
+                    "R\$${_saidas[index].saida_lucro.toString()}", 
+                    style: GoogleFonts.poppins(
+                      color: Colors.red, 
+                      fontSize: 17, 
+                      fontWeight: FontWeight.w400,
+                      ),
+                     overflow: TextOverflow.ellipsis, // Adiciona os "..." quando necessário
+                    ),
+                  ),
               ],
             )
           ],

@@ -6,6 +6,7 @@ import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class AdicionarSaida extends StatefulWidget {
   @override
@@ -196,6 +197,9 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                     ),
                     border: UnderlineInputBorder(),
                   ),
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(15), // Limite de 20 caracteres
+                  ],
                 ),
                 SizedBox(height: height * 0.02),
                 TextFormField(

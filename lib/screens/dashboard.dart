@@ -301,10 +301,10 @@ final size = MediaQuery.of(context).size;
                         width: width * 0.87,
                         height:  height* 0.22,
                         decoration: BoxDecoration(
-                          color: Color(0xFFFF0000),
+                          color: Color.fromARGB(255, 36, 51, 53),
                           border: Border.all(
                            // Cor da borda
-                            width: 2, // Largura da borda
+                            width: 0, // Largura da borda
                           ),
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -344,8 +344,8 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
           padding:  EdgeInsets.all(8.0),
           child: Image(
             image: CachedNetworkImageProvider(
-            maxWidth: 100,
-            maxHeight: 100,
+            maxWidth: 210,
+            maxHeight: 210,
             logo02,     
             ),
             loadingBuilder: (context, child, loadingProgress){
@@ -493,10 +493,10 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
                         width: width * 0.87,
                         height:  height* 0.22,
                         decoration: BoxDecoration(
-                          color: Color(0xFFFF0000),
+                          color: Color.fromARGB(255, 34, 46, 48),
                           border: Border.all(
                            // Cor da borda
-                            width: 2, // Largura da borda
+                            width: 0, // Largura da borda
                           ),
                           borderRadius: BorderRadius.circular(15),
                         ),

@@ -34,8 +34,8 @@ class HomeScreen extends StatelessWidget {
           padding:  EdgeInsets.all(1.0),
           child: Image(
             image: CachedNetworkImageProvider(
-            maxWidth: 782,
-            maxHeight: 400,
+            maxWidth: 9000,
+            maxHeight: 500,
             logo01,     
             ),
             loadingBuilder: (context, child, loadingProgress){

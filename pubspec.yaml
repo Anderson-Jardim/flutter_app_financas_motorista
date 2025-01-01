@@ -43,7 +43,7 @@ dependencies:
   intl: ^0.17.0
   flutter_masked_text2: ^0.9.1
   cached_network_image: ^3.2.0
-
+  permission_handler: ^11.0.0
 
 
 dev_dependencies:

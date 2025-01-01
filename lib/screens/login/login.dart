@@ -86,8 +86,8 @@ class _LoginState extends State<Login> {
           padding:  EdgeInsets.all(1.0),
           child: Image(
             image: CachedNetworkImageProvider(
-            maxWidth: 841,
-            maxHeight: 250,
+            maxWidth: 9000,
+            maxHeight: 299,
             logo02,     
             ),
             loadingBuilder: (context, child, loadingProgress){

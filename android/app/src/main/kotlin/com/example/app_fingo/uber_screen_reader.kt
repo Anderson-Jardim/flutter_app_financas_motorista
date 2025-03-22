@@ -87,7 +87,7 @@ class MyAccessibilityService : AccessibilityService() {
                         isCheckingOffline = true
                         Thread {
                     while (fixedCapturedValue) {
-                     if (isTextPresent(rootNode, "Caixa de entrada")) { 
+                     if (isTextPresent(rootNode, "Como foi a viagem?")) { 
                         Log.d("AccessibilityService", "Chamando pop-up de confirmação...")
                         showConfirmationDialog()
                         break
@@ -371,10 +371,10 @@ private fun extractDistanceValue(text: String): Double? {
             val urlApi = "http://192.168.0.118:8000/api/lercorridacard"
             
             
-            /* val urlGastosMensais = "http://185.173.110.141:8000/api/expenses"
-            val urlInfoones = "http://185.173.110.141:8000/api/infoone"
-            val urlClasscorridas = "http://185.173.110.141:8000/api/classcorridas"
-            val urlApi = "http://185.173.110.141:8000/api/lercorridacard" */
+            /* val urlGastosMensais = "http://147.79.82.219:8000/api/expenses"
+            val urlInfoones = "http://147.79.82.219:8000/api/infoone"
+            val urlClasscorridas = "http://147.79.82.219:8000/api/classcorridas"
+            val urlApi = "http://147.79.82.219:8000/api/lercorridacard" */
             
 
             val requestGastos = Request.Builder()
@@ -451,7 +451,7 @@ private fun extractDistanceValue(text: String): Double? {
                                                 // Chamando o método que exibe o card com o tipo de corrida e valor por km
                                                 Handler(Looper.getMainLooper()).post {
                                                      Log.d("AccessibilityService", "Chamando showCustomCard com tipo: $corridaTipo e lucro: $totalLucro")
-                                                    showCustomCard(corridaTipo, totalLucro)
+                                                    showCustomCard(corridaTipo, valorPorKm)
                                                 }
 
                                                 // Montando o request body para enviar os dados à API
@@ -526,11 +526,11 @@ private fun extractDistanceValue(text: String): Double? {
             val urlApi = "http://192.168.0.118:8000/api/lercorrida"
             val urlApilucro = "http://192.168.0.118:8000/api/monthly-earnings"
             
-            /* val urlGastosMensais = "http://185.173.110.141:8000/api/expenses"
-            val urlInfoones = "http://185.173.110.141:8000/api/infoone"
-            val urlClasscorridas = "http://185.173.110.141:8000/api/classcorridas"
-            val urlApi = "http://185.173.110.141:8000/api/lercorrida"
-            val urlApilucro = "http://185.173.110.141:8000/api/monthly-earnings" */
+            /* val urlGastosMensais = "http://147.79.82.219:8000/api/expenses"
+            val urlInfoones = "http://147.79.82.219:8000/api/infoone"
+            val urlClasscorridas = "http://147.79.82.219:8000/api/classcorridas"
+            val urlApi = "http://147.79.82.219:8000/api/lercorrida"
+            val urlApilucro = "http://147.79.82.219:8000/api/monthly-earnings" */
 
             val requestGastos = Request.Builder()
                 .url(urlGastosMensais)
@@ -691,15 +691,15 @@ private fun extractDistanceValue(text: String): Double? {
 
     override fun onInterrupt() {}
 
-    private fun showCustomCard(corridaTipo: String, totalLucro: Double) {
+    private fun showCustomCard(corridaTipo: String, valorPorKm: Double) {
         try {
             // Log para verificar se a função foi chamada
-            Log.d("TAG", "showCustomCard chamada com corridaTipo: $corridaTipo e totalLucro: $totalLucro")
+            Log.d("TAG", "showCustomCard chamada com corridaTipo: $corridaTipo e valorPorKm: $valorPorKm")
             
             val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val layoutParams = WindowManager.LayoutParams(
                 850,
-                350,
+                300,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
@@ -707,19 +707,19 @@ private fun extractDistanceValue(text: String): Double? {
             
             layoutParams.gravity = Gravity.TOP
             layoutParams.x = 0
-            layoutParams.y = 0
+            layoutParams.y = 10
     
             val view = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null)
             val textViewDistancia: TextView = view.findViewById(R.id.text_view_distancia)
-            val textViewGanhoKM: TextView = view.findViewById(R.id.text_view_ganhoKM) 
+            /* val textViewGanhoKM: TextView = view.findViewById(R.id.text_view_ganhoKM)  */
             val imageViewCorrida = view.findViewById<ImageView>(R.id.image_view_corrida)
     
             // Log para verificar se as views foram corretamente encontradas
-            Log.d("TAG", "textViewDistancia: $textViewDistancia, textViewGanhoKM: $textViewGanhoKM, imageViewCorrida: $imageViewCorrida")
+            Log.d("TAG", "textViewDistancia: $textViewDistancia, imageViewCorrida: $imageViewCorrida")
     
             // Definir o texto conforme os valores capturados
-            textViewDistancia.text = "Lucro da Corrida R$ ${"%.2f".format(totalLucro)}"
-            Log.d("TAG", "Texto do lucro da corrida definido: R$ ${"%.2f".format(totalLucro)}")
+            textViewDistancia.text = "Valor por KM R$ ${"%.2f".format(valorPorKm)}"
+            Log.d("TAG", "Texto do KM da corrida definido: R$ ${"%.2f".format(valorPorKm)}")
             
             // Log para verificar o tipo de corrida e a imagem correspondente
             val imageUrl = when (corridaTipo) {

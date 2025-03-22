@@ -1,6 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/custom_card_background"
+    android:padding="10dp"
+    android:gravity="center_vertical">
+
+    <!-- Layout horizontal para imagem e texto ficarem na mesma linha -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <!-- Texto -->
+        <TextView
+            android:id="@+id/text_view_distancia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <!-- Imagem -->
+        <ImageView
+            android:id="@+id/image_view_corrida"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="end"
+            android:paddingLeft="20dp"
+            />
+
+
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+
+
+
+<!-- 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/custom_card_background"
@@ -58,3 +103,5 @@
         android:layout_gravity="end"/> -->
 
 </LinearLayout>
+
+ -->

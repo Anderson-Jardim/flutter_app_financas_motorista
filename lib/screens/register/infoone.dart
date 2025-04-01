@@ -25,15 +25,6 @@ class _InfooneState extends State<Infoone> {
   List<InfooneModel> infooneList = [];
   bool loading = false;
 
-/*   final MoneyMaskedTextController _valorGasolinaController = MoneyMaskedTextController(
-    leftSymbol: 'R\$',
-    decimalSeparator: ',',
-    thousandSeparator: '.',
-  );
-  final MoneyMaskedTextController _kmLitroController = MoneyMaskedTextController(
-    decimalSeparator: '.',
-    thousandSeparator: ',',
-  ); */
   TextEditingController diasTrabController = TextEditingController();
   TextEditingController qtdCorridasController = TextEditingController();
 
@@ -214,38 +205,7 @@ class _InfooneState extends State<Infoone> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
-                      /* Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Qual o preço da gasolina no seu posto?',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            height: 1,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      SizedBox(height: height * 0.02), */
-                      /* TextFormField(
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          textStyle: TextStyle(color: Colors.white),
-                        ),
-                        controller: _valorGasolinaController,
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        validator:  (val) {
-                           if (val!.isEmpty) {
-                          return 'Campo Vazio';
-                           } else if (val == 'R\$0,00') {
-                              return 'Valor inválido';
-                            }
-                            return null;
-                        },
-                        decoration: kInputDecoration(''),
-                      ), */
+                     
                       SizedBox(height: height * 0.04),
                       Container(
                         alignment: Alignment.center,
@@ -299,38 +259,7 @@ class _InfooneState extends State<Infoone> {
                         decoration: kInputDecoration(''),
                       ),
                       SizedBox(height: height * 0.04),
-                     /*  Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Quantos Km seu carro faz com um litro\nde gasolina?',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            height: 1,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(height: height * 0.02), */
-                      /* TextFormField(
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          textStyle: TextStyle(color: Colors.white),
-                        ),
-                        controller: _kmLitroController,
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        validator: (val) {
-                           if (val!.isEmpty) {
-                          return 'Campo Vazio';
-                           } else if (val == '0.00') {
-                              return 'Valor inválido';
-                            }
-                            return null;
-                        },
-                        decoration: kInputDecoration(''),
-                      ), */
+                     
                     ],
                   ),
                 ),

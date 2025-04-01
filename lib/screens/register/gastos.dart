@@ -443,7 +443,7 @@ class _GastosPageState extends State<GastosPage> {
                    style: ElevatedButton.styleFrom(
                  
                   minimumSize: Size(double.infinity, 50),
-                  backgroundColor: Color(0xFF004D1F),
+                  primary: Color(0xFF004D1F), // Antes era blackground color
                   shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(11),
                       ),

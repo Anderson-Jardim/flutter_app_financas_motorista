@@ -23,6 +23,7 @@ const getGastos = baseURL + '/get-saida-lucro';
 const getLerCorrida = baseURL + '/lercorrida';
 const logo01 = baseURL + '/images/logo_01.png';
 const logo02 = baseURL + '/images/logo_02.png';
+const valorKM_URL = baseURL + '/valorKM';
 
 // ----- Errors ----- 
 const serverError = 'Erro no Servidor';
@@ -66,7 +67,7 @@ ElevatedButton kTextButton(String label, Function onPressed, Padding, FontStyle)
                         fontWeight: FontWeight.w400,
                         ),),
     style: ElevatedButton.styleFrom(
-      backgroundColor: MaterialStateColor.resolveWith((states) => Color(0xFF00ff75)),
+      primary: MaterialStateColor.resolveWith((states) => Color(0xFF00ff75)), // Antes era blackground color
       padding: Padding,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(121),
@@ -85,7 +86,7 @@ ElevatedButton kButtonAnterior(String label, Function onPressed, Padding, FontSt
                         fontWeight: FontWeight.w400,
                         ),),
     style: ElevatedButton.styleFrom(
-      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),
+      primary: MaterialStateColor.resolveWith((states) => Colors.white), // Antes era blackground color
       padding: Padding,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(121),

@@ -84,7 +84,7 @@ void getlerCorrida() async {
     final size = MediaQuery.of(context).size;
     final height = size.height;
     final width = size.width;
-    if (_saidas == null || _saidas!.isEmpty) {
+    if (_saidas == null || _saidas.isEmpty) {  // Antes era e não dava erro if (_saidas == null || _saidas!.isEmpty) { 
 
       return loading ?
        Scaffold(

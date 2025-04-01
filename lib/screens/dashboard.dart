@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/balanco/meu_balanco.dart';
-import 'package:app_fingo/screens/calculadora/info_calc.dart';
+import 'package:app_fingo/screens/calculadora/permissoes_ou_valorkm.dart';
 import 'package:app_fingo/screens/login/welcome.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -289,9 +289,9 @@ final size = MediaQuery.of(context).size;
       
                             }),
                             DashboardButton(title: 'Calculadora', onTap: (){
-                               /* Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) => CalculadoraLucroScreen()), 
-                              (route) => false); */
+                               Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => TelaComBotoes()), 
+                              (route) => false);
                             },),
                           ],
                         ),
@@ -481,9 +481,9 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
             
                             }),
                             DashboardButton(title: 'Calculadora', onTap: (){
-                               /* Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) => CalculadoraLucroScreen()), 
-                              (route) => false); */
+                               Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => TelaComBotoes()), 
+                              (route) => false);
                             },),
                           ],
                         ),

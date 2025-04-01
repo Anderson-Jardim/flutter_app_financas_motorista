@@ -369,12 +369,13 @@ private fun extractDistanceValue(text: String): Double? {
             val urlInfoones = "http://192.168.0.118:8000/api/infoone"
             val urlClasscorridas = "http://192.168.0.118:8000/api/classcorridas"
             val urlApi = "http://192.168.0.118:8000/api/lercorridacard"
-            
+            val urlValorporKM = "http://192.168.0.118:8000/api/valorKM"
             
             /* val urlGastosMensais = "http://147.79.82.219:8000/api/expenses"
             val urlInfoones = "http://147.79.82.219:8000/api/infoone"
             val urlClasscorridas = "http://147.79.82.219:8000/api/classcorridas"
-            val urlApi = "http://147.79.82.219:8000/api/lercorridacard" */
+            val urlApi = "http://147.79.82.219:8000/api/lercorridacard" 
+            val urlApi = "http://147.79.82.219:8000/api/valorKM" */
             
 
             val requestGastos = Request.Builder()
@@ -416,25 +417,25 @@ private fun extractDistanceValue(text: String): Double? {
                                     val diasTrabalhados = infoonesItem.getInt("dias_trab")
                                     val qtdCorridas = infoonesItem.getInt("qtd_corridas")
 
-                                    val requestClasscorridas = Request.Builder()
-                                        .url(urlClasscorridas)
+                                    val requestValorPorKM = Request.Builder()
+                                        .url(urlValorporKM)
                                         .addHeader("Authorization", "Bearer $token")
                                         .build()
 
-                                    client.newCall(requestClasscorridas).enqueue(object : Callback {
+                                    client.newCall(requestValorPorKM).enqueue(object : Callback {
                                         override fun onFailure(call: Call, e: IOException) {
-                                            Log.e("API_ERROR", "Failed to fetch classcorridas data: $e")
+                                            Log.e("API_ERROR", "Failed to fetch valorporKM data: $e")
                                         }
 
                                         override fun onResponse(call: Call, response: Response) {
                                             if (response.isSuccessful) {
-                                                val classcorridasData = response.body?.string()
-                                                val classcorridasArray = JSONArray(classcorridasData)
-                                                val classcorridasItem = classcorridasArray.getJSONObject(0)
+                                                val valorPorKMData = response.body?.string()
+                                                val valorPorKMArray = JSONArray(valorPorKMData)
+                                                val valorPorKMItem = valorPorKMArray.getJSONObject(0)
 
-                                                val corridaBronze = classcorridasItem.getInt("corrida_bronze")
-                                                val corridaOuro = classcorridasItem.getInt("corrida_ouro")
-                                                val corridaDiamante = classcorridasItem.getInt("corrida_diamante")
+                                                val corridaRuim = valorPorKMItem.getInt("ruim")
+                                                val corridaBoa = valorPorKMItem.getInt("bom")
+                                                
 
                                                 val totalCusto = (monthlyExpenses / diasTrabalhados) / qtdCorridas
                                                 val totalLucro = decimalValue - totalCusto
@@ -443,14 +444,14 @@ private fun extractDistanceValue(text: String): Double? {
 
                                                 // Defina o valor de corridaTipo aqui
                                                 val corridaTipo: String = when {
-                                                    valorKm <= corridaBronze -> "Corrida Bronze"
-                                                    valorKm <= corridaOuro -> "Corrida Ouro"
-                                                    else -> "Corrida Diamante"
+                                                    valorPorKm < corridaBoa -> "Corrida Ruim"
+                                                    valorPorKm >= corridaBoa -> "Corrida Boa"
+                                                    else -> ""
                                                 }
 
                                                 // Chamando o método que exibe o card com o tipo de corrida e valor por km
                                                 Handler(Looper.getMainLooper()).post {
-                                                     Log.d("AccessibilityService", "Chamando showCustomCard com tipo: $corridaTipo e lucro: $totalLucro")
+                                                     Log.d("AccessibilityService", "Chamando showCustomCard com tipo: $corridaTipo e Valor por KM: $valorPorKm")
                                                     showCustomCard(corridaTipo, valorPorKm)
                                                 }
 
@@ -723,17 +724,17 @@ private fun extractDistanceValue(text: String): Double? {
             
             // Log para verificar o tipo de corrida e a imagem correspondente
             val imageUrl = when (corridaTipo) {
-                "Corrida Bronze" -> {
-                    Log.d("TAG", "Tipo de corrida: Corrida Bronze")
-                    R.drawable.bandeirabronze
+                "Corrida Ruim" -> {
+                    Log.d("TAG", "Tipo de corrida: Corrida Ruim")
+                    R.drawable.circulo
                 }
-                "Corrida Ouro" -> {
-                    Log.d("TAG", "Tipo de corrida: Corrida Ouro")
-                    R.drawable.bandeiraouro
+                "Corrida Boa" -> {
+                    Log.d("TAG", "Tipo de corrida: Corrida Boa")
+                    R.drawable.verde
                 }
                 else -> {
-                    Log.d("TAG", "Tipo de corrida: Corrida Diamante (default)")
-                    R.drawable.bandeiradiamante
+                    Log.d("TAG", "(default)")
+                    /* R.drawable.bandeiradiamante */
                 }
             }
     

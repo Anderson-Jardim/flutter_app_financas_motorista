@@ -433,14 +433,19 @@ private fun extractDistanceValue(text: String): Double? {
                                                 val valorPorKMArray = JSONArray(valorPorKMData)
                                                 val valorPorKMItem = valorPorKMArray.getJSONObject(0)
 
-                                                val corridaRuim = valorPorKMItem.getInt("ruim")
-                                                val corridaBoa = valorPorKMItem.getInt("bom")
-                                                
+                                                val corridaRuim = valorPorKMItem.getDouble("ruim")
+                                                Log.d("AccessibilityService", "Valor Corrida Ruim: $corridaRuim")
+                                                val corridaBoa = valorPorKMItem.getDouble("bom")
+                                                Log.d("AccessibilityService", "Valor Corrida Boa: $corridaBoa")
 
                                                 val totalCusto = (monthlyExpenses / diasTrabalhados) / qtdCorridas
+                                                Log.d("AccessibilityService", "Total Custo: $totalCusto")
                                                 val totalLucro = decimalValue - totalCusto
-                                                val valorKm = (totalLucro / decimalValue) * 100
-                                                val valorPorKm = totalDistance / totalLucro
+                                                Log.d("AccessibilityService", "Total Lucro: $totalLucro")
+                                                /* val valorKm = (totalLucro / decimalValue) * 100
+                                                Log.d("AccessibilityService", "Total valorKM: $valorKm") */
+                                                val valorPorKm = totalLucro / totalDistance  
+                                                Log.d("AccessibilityService", "Total Valor Por KM: $valorPorKm")
 
                                                 // Defina o valor de corridaTipo aqui
                                                 val corridaTipo: String = when {
@@ -726,11 +731,11 @@ private fun extractDistanceValue(text: String): Double? {
             val imageUrl = when (corridaTipo) {
                 "Corrida Ruim" -> {
                     Log.d("TAG", "Tipo de corrida: Corrida Ruim")
-                    R.drawable.circulo
+                    R.drawable.bandeirabronze
                 }
                 "Corrida Boa" -> {
                     Log.d("TAG", "Tipo de corrida: Corrida Boa")
-                    R.drawable.verde
+                    R.drawable.bandeiraouro
                 }
                 else -> {
                     Log.d("TAG", "(default)")

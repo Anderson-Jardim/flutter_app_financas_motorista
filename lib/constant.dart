@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/*  const baseURL = 'http://147.79.82.219:8000/api';  */
- const baseURL = 'http://192.168.0.118:8000/api'; 
+ const baseURL = 'http://147.79.82.219:8000/api'; 
+/*  const baseURL = 'http://192.168.0.118:8000/api';  */
 
 const loginURL = baseURL + '/login';
 const registerURL = baseURL + '/register';
@@ -24,6 +24,8 @@ const getLerCorrida = baseURL + '/lercorrida';
 const logo01 = baseURL + '/images/logo_01.png';
 const logo02 = baseURL + '/images/logo_02.png';
 const valorKM_URL = baseURL + '/valorKM';
+const EsqueciminhaSenhaURL = baseURL + '/esqueci-minha-Senha';
+const RedefinirSenhaURL = baseURL + '/redefinir-Senha';
 
 // ----- Errors ----- 
 const serverError = 'Erro no Servidor';
@@ -67,7 +69,7 @@ ElevatedButton kTextButton(String label, Function onPressed, Padding, FontStyle)
                         fontWeight: FontWeight.w400,
                         ),),
     style: ElevatedButton.styleFrom(
-      primary: MaterialStateColor.resolveWith((states) => Color(0xFF00ff75)), // Antes era blackground color
+      backgroundColor: WidgetStateColor.resolveWith((states) => Color(0xFF00ff75)), // Antes era blackground color
       padding: Padding,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(121),
@@ -86,7 +88,7 @@ ElevatedButton kButtonAnterior(String label, Function onPressed, Padding, FontSt
                         fontWeight: FontWeight.w400,
                         ),),
     style: ElevatedButton.styleFrom(
-      primary: MaterialStateColor.resolveWith((states) => Colors.white), // Antes era blackground color
+      backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white), // Antes era blackground color
       padding: Padding,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(121),

@@ -1,4 +1,4 @@
-import 'dart:convert';
+/* import 'dart:convert';
 
 import 'package:app_fingo/screens/register/register.dart';
 import 'package:flutter/material.dart';
@@ -328,3 +328,4 @@ class _ClasscorridasState extends State<Classcorridas> {
     );
   }
 }
+ */

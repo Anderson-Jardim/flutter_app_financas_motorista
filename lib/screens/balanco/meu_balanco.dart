@@ -225,7 +225,7 @@ class _BalancoState extends State<Balanco> {
                 padding: EdgeInsets.only(bottom: height * 0.02),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
+                    backgroundColor: Colors.black,
                     padding: EdgeInsets.symmetric(
                         vertical: height * 0.02, horizontal: width * 0.2),
                     shape: RoundedRectangleBorder(
@@ -324,7 +324,7 @@ return loading ?
                 padding: EdgeInsets.only(bottom: height * 0.02),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
+                    backgroundColor: Colors.black,
                     padding: EdgeInsets.symmetric(
                         vertical: height * 0.02, horizontal: width * 0.2),
                     shape: RoundedRectangleBorder(

@@ -278,7 +278,7 @@ class _AdicionarSaidaState extends State<AdicionarSaida> {
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.black,
+                      backgroundColor: Colors.black,
                       padding: EdgeInsets.symmetric(
                         vertical: height * 0.02,
                         horizontal: width * 0.2,

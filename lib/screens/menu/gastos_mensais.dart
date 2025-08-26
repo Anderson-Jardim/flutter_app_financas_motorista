@@ -1,3 +1,4 @@
+import 'package:app_fingo/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
@@ -13,19 +14,17 @@ import '../../models/api_response.dart';
 import '../../models/gastos_model.dart';
 import '../../services/user_service.dart';
 import '../login/welcome.dart';
-import 'infoone.dart';
-import 'register.dart';
 
 
 
-class GastosPage extends StatefulWidget {
+class GastosMensais extends StatefulWidget {
    
 
   @override
-  _GastosPageState createState() => _GastosPageState();
+  _GastosMensaisState createState() => _GastosMensaisState();
 }
 
-class _GastosPageState extends State<GastosPage> {
+class _GastosMensaisState extends State<GastosMensais> {
   List<Gastos>  getgastos = [];
   bool loading = false;
   final _formKey = GlobalKey<FormState>();
@@ -72,7 +71,7 @@ class _GastosPageState extends State<GastosPage> {
           if (updateResponse.statusCode == 200) {
             if (mounted) {
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Infoone()),
+                MaterialPageRoute(builder: (context) => Dashboard()),
                 (route) => false,
               );
               ScaffoldMessenger.of(context).showSnackBar(
@@ -88,37 +87,7 @@ class _GastosPageState extends State<GastosPage> {
               );
             }
           }
-        } else {
-          // Crie um novo registro
-          final createResponse = await http.post(
-            url,
-            headers: <String, String>{
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: json.encode({'gastos': _gastos}),
-          );
-
-          if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-            if (mounted) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Infoone()),
-                (route) => false,
-              );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Dados adicionados com sucesso')),
-              );
-            }
-          } else {
-            print('Falha ao adicionar Gastos: ${createResponse.statusCode}');
-            print('Resposta do servidor: ${createResponse.body}');
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Para continuar, adicione os seus gastos')),
-              );
-            }
-          }
-        }
+        } 
       } else {
         print('Falha ao verificar Gastos: ${checkResponse.statusCode}');
         print('Resposta do servidor: ${checkResponse.body}');
@@ -231,6 +200,22 @@ class _GastosPageState extends State<GastosPage> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      appBar: AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75)),
+        onPressed: () {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => Dashboard()),
+              (route) => false);
+        },
+      ),
+      title: const Text(
+        'Gastos Mensais',
+        style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+      ),
+    ),
       backgroundColor: Color(0xFF171f20),
       body: SingleChildScrollView(
         child: Padding(
@@ -242,26 +227,6 @@ class _GastosPageState extends State<GastosPage> {
               children: [
                 
                 SizedBox(height: height * 0.1),
-
-                RichText(
-            text: TextSpan(
-              style: GoogleFonts.poppins(
-                fontSize: 45,
-                height: 1,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-              ),
-              children: <TextSpan>[
-                TextSpan(text: 'Precisamos\nconhecer'),
-                TextSpan(
-                  text: '\nseu negócio.',
-                  style: TextStyle(color: Color(0xFF00ff75)),
-                ),
-                
-              ],
-            ),
-            textAlign: TextAlign.left,
-          ),
 
               SizedBox(height: height * 0.05,),
               Text(
@@ -450,7 +415,7 @@ class _GastosPageState extends State<GastosPage> {
                 ),
                 SizedBox(height: height * 0.05,),
 
-              kTextButton('Próximo', () async {
+              kTextButton('Salvar', () async {
                     if (_formKey.currentState!.validate()) {
                       _sendGastos();
                     }
@@ -463,17 +428,7 @@ class _GastosPageState extends State<GastosPage> {
                       
                     ),
                     SizedBox(height: height * 0.02),
-
-
-              kButtonAnterior('Anterior', (){
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
-
-                },  EdgeInsets.symmetric(
-                      vertical: height * 0.02,
-                      horizontal: width * 0.30
-                      ),
-                      height * 0.025,
-                      ),
+               
                     ],
                   ),
                   

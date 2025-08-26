@@ -1,16 +1,20 @@
 import 'dart:developer';
 import 'package:app_fingo/constant.dart';
 import 'package:app_fingo/screens/balanco/meu_balanco.dart';
-import 'package:app_fingo/screens/calculadora/permissoes_ou_valorkm.dart';
 import 'package:app_fingo/screens/login/welcome.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../services/classcorridas_service.dart';
+
 import '../services/meslucro_service.dart';
+import 'calculadora/valor_km.dart';
 import 'historico/lista_historico.dart';
+import 'menu/dados_pessoais.dart';
+import 'menu/gastos_mensais.dart';
+import 'menu/meta_financeira.dart';
+import 'menu/qtd_corridas.dart';
 import 'meta_lucro/meta_lucro.dart';
 import '../models/api_response.dart';
 import '../models/lucro_corrida_model.dart';
@@ -24,6 +28,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   User? user;
   bool loading = true;
   List<lucroCorridaModel>? lucroCorrida;
@@ -91,14 +96,14 @@ Future<void> _refreshData() async {
   ApiResponse response = await getMeslucroDetail(); // Função que verifica dados em 'mesLucro'
   ApiResponse infones = await getInfooneDetail(); 
   ApiResponse gastos = await getExpensesDetail(); 
-  ApiResponse classcorridas = await getclassCorridasDetail(); 
+/*   ApiResponse classcorridas = await getclassCorridasDetail();  */
   
   // Verifica se response.data é uma lista e se está vazia
   if (
     response.error == null && response.data != null && response.data is List && (response.data as List).isNotEmpty &&
     infones.error == null && infones.data != null && infones.data is List && (infones.data as List).isNotEmpty &&
-    gastos.error == null && gastos.data != null && gastos.data is List && (gastos.data as List).isNotEmpty &&
-    classcorridas.error == null && classcorridas.data != null && classcorridas.data is List && (classcorridas.data as List).isNotEmpty
+    gastos.error == null && gastos.data != null && gastos.data is List && (gastos.data as List).isNotEmpty 
+    /* classcorridas.error == null && classcorridas.data != null && classcorridas.data is List && (classcorridas.data as List).isNotEmpty */
   ) {
     // Dados encontrados, carregue o usuário e prossiga para o dashboard
     getUser();
@@ -134,6 +139,8 @@ final size = MediaQuery.of(context).size;
 
       return loading ?
       Scaffold(
+              
+
         backgroundColor: Color(0xFF171f20),
         body: Center(
               child: CircularProgressIndicator(
@@ -143,6 +150,7 @@ final size = MediaQuery.of(context).size;
       )
       
       : Scaffold(
+        key: _scaffoldKey,
       backgroundColor: Color(0xFF171f20),
       appBar: AppBar(
         
@@ -189,12 +197,7 @@ final size = MediaQuery.of(context).size;
         actions: [
           GestureDetector(
             onTap: (){
-              logout().then((value) => {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => HomeScreen()), 
-                          (route) => false
-                        )
-                      });
+             _scaffoldKey.currentState?.openDrawer();
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -225,6 +228,100 @@ final size = MediaQuery.of(context).size;
           ),
         ],
       ),
+      drawer: Drawer(
+
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: 80,
+              child: DrawerHeader(
+                
+                decoration: BoxDecoration(
+
+                  color: Color.fromARGB(255, 36, 51, 53),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    /* Icon(
+                      Icons.account_circle,
+                      size: 80,
+                      color: Colors.white,
+                    ), */
+                    SizedBox(height: 10),
+                    /* Text(
+                      'Usuário',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ), */
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Início'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Perfil'),
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => InfoPessoais()), (route) => false);
+              },
+            ),
+            ExpansionTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Configurações'),
+              children: [
+                ListTile(
+                  title: const Text('Gastos mensais'),
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => GastosMensais()),
+                (route) => false,
+              );
+                  },
+                ),
+                ListTile(
+                  title: const Text('Meta Financeira Mensal'),
+                  onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => MetaFinanceira()),
+                (route) => false,
+              );
+                    
+                  },
+                ),
+                ListTile(
+                  title: const Text('Corrida e Dias'),
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Qtd_Corrida()),
+                (route) => false,
+              );
+                  },
+                ),
+              ],
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Sair'),
+              onTap: () {
+                logout().then((value) => {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => HomeScreen()), 
+                          (route) => false
+                        )
+                      });
+              },
+            ),
+          ],
+        ),
+      ),
+      
       body: RefreshIndicator(
         onRefresh: _refreshData,
         color: Color(0xFF171f20),
@@ -290,7 +387,7 @@ final size = MediaQuery.of(context).size;
                             }),
                             DashboardButton(title: 'Calculadora', onTap: (){
                                Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) => TelaComBotoes()), 
+                              MaterialPageRoute(builder: (context) => ganhoPorKm()), 
                               (route) => false);
                             },),
                           ],
@@ -335,6 +432,7 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
       )
       
       : Scaffold(
+        key: _scaffoldKey,
       backgroundColor: Color(0xFF171f20),
       appBar: AppBar(
         
@@ -381,12 +479,7 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
         actions: [
           GestureDetector(
             onTap: (){
-              logout().then((value) => {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => HomeScreen()), 
-                          (route) => false
-                        )
-                      });
+              _scaffoldKey.currentState?.openDrawer();
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -416,6 +509,99 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
             ),
           ),
         ],
+      ),
+      drawer: Drawer(
+
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: 80,
+              child: DrawerHeader(
+                
+                decoration: BoxDecoration(
+
+                  color: Color.fromARGB(255, 36, 51, 53),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    /* Icon(
+                      Icons.account_circle,
+                      size: 80,
+                      color: Colors.white,
+                    ), */
+                    SizedBox(height: 10),
+                    /* Text(
+                      'Usuário',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ), */
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Início'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Perfil'),
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => InfoPessoais()), (route) => false);
+              },
+            ),
+            ExpansionTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Configurações'),
+              children: [
+                ListTile(
+                  title: const Text('Gastos mensais'),
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => GastosMensais()),
+                (route) => false,
+              );
+                  },
+                ),
+                ListTile(
+                  title: const Text('Meta Financeira Mensal'),
+                  onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => MetaFinanceira()),
+                (route) => false,
+              );
+                    
+                  },
+                ),
+                ListTile(
+                  title: const Text('Corrida e Dias'),
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Qtd_Corrida()),
+                (route) => false,
+              );
+                  },
+                ),
+              ],
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Sair'),
+              onTap: () {
+                logout().then((value) => {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => HomeScreen()), 
+                          (route) => false
+                        )
+                      });
+              },
+            ),
+          ],
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: _refreshData,
@@ -482,7 +668,7 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
                             }),
                             DashboardButton(title: 'Calculadora', onTap: (){
                                Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) => TelaComBotoes()), 
+                              MaterialPageRoute(builder: (context) => ganhoPorKm()), 
                               (route) => false);
                             },),
                           ],
@@ -493,6 +679,7 @@ double valorCorrida = double.tryParse(corrida.valor_corrida ?? '0') ?? 0;
                         width: width * 0.87,
                         height:  height* 0.22,
                         decoration: BoxDecoration(
+                          
                           color: Color.fromARGB(255, 34, 46, 48),
                           border: Border.all(
                            // Cor da borda
@@ -529,7 +716,7 @@ class DashboardButton extends StatelessWidget {
       width: width * 0.41,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Color(0xFFEBEBEB),
+          backgroundColor: Color(0xFFEBEBEB),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),

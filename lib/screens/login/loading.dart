@@ -3,19 +3,11 @@ import 'package:flutter/material.dart';
 
 import '../../constant.dart';
 import '../../models/api_response.dart';
-import '../../models/classcorridas_model.dart';
-import '../../models/gastos_model.dart';
-import '../../models/infoone_model.dart';
-import '../../models/lucro_corrida_model.dart';
-import '../../models/meslucro_model.dart';
+
 import '../../services/classcorridas_service.dart';
 import '../../services/meslucro_service.dart';
 import '../../services/user_service.dart';
 import '../dashboard.dart';
-import 'login.dart';
-import '../register/gastos.dart';
-import '../register/infoone.dart';
-import '../register/register.dart';
 
 
 class Loading extends StatefulWidget {

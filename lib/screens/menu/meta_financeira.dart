@@ -11,14 +11,15 @@ import '../../models/api_response.dart';
 import '../../models/meslucro_model.dart';
 import '../../services/meslucro_service.dart';
 import '../../services/user_service.dart';
+import '../dashboard.dart';
 import '../login/welcome.dart';
 
-class MesLucros extends StatefulWidget {
+class MetaFinanceira extends StatefulWidget {
   @override
-  _MesLucrosState createState() => _MesLucrosState();
+  _MetaFinanceiraState createState() => _MetaFinanceiraState();
 }
 
-class _MesLucrosState extends State<MesLucros> {
+class _MetaFinanceiraState extends State<MetaFinanceira> {
   List<meslucroModel> meslucromodel = [];
   bool loading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -65,7 +66,7 @@ class _MesLucrosState extends State<MesLucros> {
           if (updateResponse.statusCode == 200) {
             if (mounted) {
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => FinalCad()),
+                MaterialPageRoute(builder: (context) => Dashboard()),
                 (route) => false,
               );
               ScaffoldMessenger.of(context).showSnackBar(
@@ -81,37 +82,7 @@ class _MesLucrosState extends State<MesLucros> {
               );
             }
           }
-        } else {
-          // Crie um novo registro
-          final createResponse = await http.post(
-            url,
-            headers: <String, String>{
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: jsonEncode(data),
-          );
-
-          if (createResponse.statusCode == 200 || createResponse.statusCode == 201) {
-            if (mounted) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => FinalCad()),
-                (route) => false,
-              );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Dados adicionados com sucesso')),
-              );
-            }
-          } else {
-            print('Falha ao adicionar Mes Lucros: ${createResponse.statusCode}');
-            print('Resposta do servidor: ${createResponse.body}');
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Falha ao adicionar dados: ${createResponse.statusCode}')),
-              );
-            }
-          }
-        }
+        } 
       } else {
         print('Falha ao verificar Mes Lucros: ${checkResponse.statusCode}');
         print('Resposta do servidor: ${checkResponse.body}');
@@ -190,6 +161,22 @@ class _MesLucrosState extends State<MesLucros> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      appBar: AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_new, color: Color(0xFF00ff75)),
+        onPressed: () {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => Dashboard()),
+              (route) => false);
+        },
+      ),
+      title: const Text(
+        'Meta Financeira',
+        style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+      ),
+    ),
       backgroundColor: Color(0xFF171f20),
       body: SingleChildScrollView(
         child: Padding(
@@ -199,35 +186,8 @@ class _MesLucrosState extends State<MesLucros> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: height * 0.1),
-                Container(
-                  width: width * 0.8,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.poppins(
-                            fontSize: 70,
-                            height: 1,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(text: 'Vamos\nfalar do'),
-                            TextSpan(
-                              text: '\nfuturo.',
-                              style: TextStyle(color: Color(0xFF00ff75)),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(height: height * 0.03),
-                    ],
-                  ),
-                ),
-                SizedBox(height: height * 0.03),
+                
+                SizedBox(height: height * 0.2),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -267,9 +227,9 @@ class _MesLucrosState extends State<MesLucros> {
                     ],
                   ),
                 ),
-                SizedBox(height: height * 0.15),
+                SizedBox(height: height * 0.10),
                 kTextButton(
-                  'Próximo',
+                  'Salvar',
                   () async {
                     if (_formKey.currentState!.validate()) {
                       _submitMesLucro();
@@ -281,23 +241,7 @@ class _MesLucrosState extends State<MesLucros> {
                   ),
                   height * 0.025,
                 ),
-                SizedBox(height: height * 0.02),
-                kButtonAnterior(
-                  'Anterior',
-                  () {
-                    if (mounted) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Infoone()),
-                        (route) => false,
-                      );
-                    }
-                  },
-                  EdgeInsets.symmetric(
-                    vertical: height * 0.02,
-                    horizontal: width * 0.30,
-                  ),
-                  height * 0.025,
-                ),
+                
                 SizedBox(height: height * 0.05),
               ],
             ),

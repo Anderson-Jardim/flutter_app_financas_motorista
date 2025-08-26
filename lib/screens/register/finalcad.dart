@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../models/user.dart';
 import '../dashboard.dart';
 
 class FinalCad extends StatefulWidget {
@@ -50,7 +47,7 @@ class _FinalCadState extends State<FinalCad> {
                   
                   child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Color(0xFF00FF75),
+                    backgroundColor: Color(0xFF00FF75),
                     padding: EdgeInsets.symmetric(
                       vertical: height * 0.03,
                       horizontal: width * 0.10

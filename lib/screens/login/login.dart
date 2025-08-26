@@ -11,7 +11,8 @@ import '../../models/api_response.dart';
 import '../../models/user.dart';
 import '../../services/user_service.dart';
 
-import '../register/register.dart';
+
+import 'redefinir-senha/esqueci_minha_senha.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -186,7 +187,7 @@ class _LoginState extends State<Login> {
                             }
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Color(0xFF00ff75),                        
+                          backgroundColor: Color(0xFF00ff75),                        
                           padding: EdgeInsets.symmetric(
                             vertical: height * 0.02,
                             horizontal: width * 0.30
@@ -216,11 +217,12 @@ class _LoginState extends State<Login> {
 
                       ElevatedButton(
                         onPressed: () {
-                           /* Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false); */
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context)=>ForgotPasswordScreen()), (route) => false); 
                         },
                         style: ElevatedButton.styleFrom(
 
-                          primary: Colors.white,
+                          backgroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             vertical: height * 0.02,
                             horizontal: width * 0.14

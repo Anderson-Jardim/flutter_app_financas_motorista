@@ -1,22 +1,29 @@
-import 'package:app_fingo/models/api_response.dart';
+
 import 'package:app_fingo/models/valorKM_model.dart';
-import 'package:app_fingo/services/valor_KM_service.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+import 'package:flutter/services.dart';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Para usar JSON
 import '../../constant.dart';
 import '../../services/user_service.dart';
 import '../dashboard.dart';
-import '../login/welcome.dart';
 
+import 'package:flutter_accessibility_service/flutter_accessibility_service.dart';
+import 'package:notification_permissions/notification_permissions.dart' as np;
+import 'package:permission_handler/permission_handler.dart';
 class ganhoPorKm extends StatefulWidget {
   @override
   _ganhoPorKmState createState() => _ganhoPorKmState();
 }
 
-class _ganhoPorKmState extends State<ganhoPorKm> {
-
+class _ganhoPorKmState extends State<ganhoPorKm> with WidgetsBindingObserver{
+static const platform = MethodChannel('com.example.app_fingo/accessibility');
+  late Future<String> notificationPermissionFuture;
+  late Future<String> overlayPermissionFuture;
+  late Future<String> accessibilityPermissionFuture;
+  String accessibilityStatus = 'Carregando...';
 List<valorKM_Model> valorkm_model = [];
  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -128,15 +135,93 @@ Future<void> getValorKM() async {
 }
 
 
+@override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      setState(() {
+        notificationPermissionFuture = getCheckNotificationPermStatus();
+        overlayPermissionFuture = getOverlayPermissionStatus();
+        accessibilityPermissionFuture = getAccessibilityPermissionStatus();
+        _checkAccessibilityStatus();
+      });
+    }
+  }
+
+  Future<String> getCheckNotificationPermStatus() async {
+    return np.NotificationPermissions.getNotificationPermissionStatus().then((status) {
+      switch (status) {
+        case np.PermissionStatus.denied:
+          return 'Não ativada ❌';
+        case np.PermissionStatus.granted:
+          return 'Ativada ✅';
+        case np.PermissionStatus.unknown:
+          return 'Status desconhecido ❓';
+        case np.PermissionStatus.provisional:
+          return 'Permissão provisória ⚠️';
+        default:
+          return 'Erro ao verificar';
+      }
+    });
+  }
+
+  Future<String> getOverlayPermissionStatus() async {
+    bool isGranted = await Permission.systemAlertWindow.isGranted;
+    return isGranted ? 'Ativada ✅' : 'Não ativada ❌';
+  }
+
+  Future<void> requestOverlayPermission() async {
+    if (!await Permission.systemAlertWindow.isGranted) {
+      await Permission.systemAlertWindow.request();
+      setState(() {
+        overlayPermissionFuture = getOverlayPermissionStatus();
+      });
+    }
+  }
+
+  Future<String> getAccessibilityPermissionStatus() async {
+    bool isEnabled = await FlutterAccessibilityService.isAccessibilityPermissionEnabled();
+    return isEnabled ? 'Ativada ✅' : 'Não ativada ❌';
+  }
+
+  Future<void> requestAccessibilityPermission() async {
+    await FlutterAccessibilityService.requestAccessibilityPermission();
+    setState(() {
+      accessibilityPermissionFuture = getAccessibilityPermissionStatus();
+      _checkAccessibilityStatus();
+    });
+  }
+
+  Future<void> _checkAccessibilityStatus() async {
+    try {
+      final bool isEnabled = await platform.invokeMethod('isAccessibilityEnabled');
+      setState(() {
+        accessibilityStatus = isEnabled ? 'Ativada ✅' : 'Não ativada ❌';
+      });
+    } on PlatformException catch (e) {
+      print("Erro ao verificar acessibilidade: ${e.message}");
+      setState(() {
+        accessibilityStatus = 'Erro ao verificar status';
+      });
+    }
+  }
+
+
 
 @override
   void initState() {
     super.initState();
     getValorKM();
+    notificationPermissionFuture = getCheckNotificationPermStatus();
+    overlayPermissionFuture = getOverlayPermissionStatus();
+    accessibilityPermissionFuture = getAccessibilityPermissionStatus();
+    _checkAccessibilityStatus();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
 Widget build(BuildContext context) {
+  double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
   return Scaffold(
     appBar: AppBar(
       backgroundColor: Colors.transparent,
@@ -150,56 +235,157 @@ Widget build(BuildContext context) {
         },
       ),
       title: const Text(
-        'Permissões do App',
+        'Valor por KM',
         style: TextStyle(color: Colors.black),
       ),
     ),
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.grey[200],
     body: Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              campoValor(
-                "Ruim",
-                double.tryParse(_valorkm_ruim_Controller.text) ?? 0.0,
-                Colors.black,
-                (value) {
-                  setState(() {
-                    _valorkm_ruim_Controller.text = value.toString();
-                  });
-                },
-                limite: double.tryParse(_valorkm_bom_Controller.text) ?? 0.0, // Passando o valor de "bom" como limite
-  isRuim: true, // Identificando que é o campo "ruim"
-              ),
-              SizedBox(width: 20),
-              campoValor(
-                "Bom",
-                double.tryParse(_valorkm_bom_Controller.text) ?? 0.0,
-                Colors.black,
-                (value) {
-                  setState(() {
-                    _valorkm_bom_Controller.text = value.toString();
-                  });
-                },
-                   limite: double.tryParse(_valorkm_ruim_Controller.text) ?? 0.0, // Passando o valor de "ruim" como limite
-  isRuim: false, // Identificando que é o campo "bom"
-              ),
-            ],
-          ),
           SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              // Chama a função para enviar os dados
-              atualizaValorKM();
-            },
-            style: ElevatedButton.styleFrom(
-              primary: Colors.black,
+          Container(
+            margin: EdgeInsets.only(left: 15, right: 15, bottom: 20),
+            padding: EdgeInsets.only(top: 20, bottom: 20),
+            
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15), // Borda arredondada
+              boxShadow: [
+                /* BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: Offset(4, 4), // Sombra
+                ), */
+              ],
             ),
-            child: Text("SALVAR"),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    campoValor(
+                      "Ruim",
+                      double.tryParse(_valorkm_ruim_Controller.text) ?? 0.0,
+                      Colors.black,
+                      (value) {
+                        setState(() {
+                          _valorkm_ruim_Controller.text = value.toString();
+                        });
+                      },
+                      limite: double.tryParse(_valorkm_bom_Controller.text) ?? 0.0, // Passando o valor de "bom" como limite
+  isRuim: true, // Identificando que é o campo "ruim"
+                    ),
+                    SizedBox(width: 20),
+                    campoValor(
+                      "Bom",
+                      double.tryParse(_valorkm_bom_Controller.text) ?? 0.0,
+                      Colors.black,
+                      (value) {
+                        setState(() {
+                          _valorkm_bom_Controller.text = value.toString();
+                        });
+                      },
+                         limite: double.tryParse(_valorkm_ruim_Controller.text) ?? 0.0, // Passando o valor de "ruim" como limite
+  isRuim: false, // Identificando que é o campo "bom"
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Chama a função para enviar os dados
+                    atualizaValorKM();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                  ),
+                  child: Text("SALVAR"),
+                ),
+              ],
+            ),
           ),
+
+            SizedBox(height: 20),
+          Container(
+            height: height * 0.46,
+            width: width * 0.9,
+            /* margin: EdgeInsets.only(left: 15, right: 15, bottom: 20), */
+            /* padding: EdgeInsets.only(top: 20, bottom: 20, left: 30, right: 30), */
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15), // Borda arredondada
+              boxShadow: [
+                /* BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: Offset(4, 4), // Sombra
+                ), */
+              ],
+            ),
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FutureBuilder<String>(
+                  future: notificationPermissionFuture,
+                  builder: (context, snapshot) {
+                    return Text(
+                      "Permissão de Notificação: ${snapshot.data ?? 'Erro'}",
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    );
+                  },
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    await np.NotificationPermissions.requestNotificationPermissions(
+                        iosSettings: const np.NotificationSettingsIos(
+                            sound: true, badge: true, alert: true));
+                    setState(() {
+                      notificationPermissionFuture = getCheckNotificationPermStatus();
+                    });
+                  },
+                  child: Text("Solicitar Permissão de Notificação"),
+                ),
+                SizedBox(height: 30),
+                FutureBuilder<String>(
+                  future: overlayPermissionFuture,
+                  builder: (context, snapshot) {
+                    return Text(
+                      "Permissão de Sobreposição: ${snapshot.data ?? 'Erro'}",
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    );
+                  },
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: requestOverlayPermission,
+                  child: Text("Solicitar Permissão de Sobreposição"),
+                ),
+                SizedBox(height: 30),
+                Text(
+                  "Permissão de Acessibilidade: $accessibilityStatus",
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: requestAccessibilityPermission,
+                  child: Text("Ativar Serviço de Acessibilidade"),
+                ),
+              ],
+            ),
+
+
+
+
+          )
         ],
       ),
     ),

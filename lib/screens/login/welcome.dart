@@ -86,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Register()), (route) => false);
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
+                          backgroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             vertical: height * 0.02,
                             horizontal: width * 0.17
@@ -112,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Login()), (route) => false);
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Color(0xFF00ff75),                        
+                          backgroundColor: Color(0xFF00ff75),                        
                           padding: EdgeInsets.symmetric(
                             vertical: height * 0.02,
                             horizontal: width * 0.30

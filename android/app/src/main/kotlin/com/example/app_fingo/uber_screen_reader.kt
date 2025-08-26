@@ -27,6 +27,7 @@ import android.text.Editable
 import android.text.InputFilter
 import android.icu.text.NumberFormat
 import com.bumptech.glide.Glide
+import android.view.View
 
 
 class MyAccessibilityService : AccessibilityService() {
@@ -158,7 +159,7 @@ class MyAccessibilityService : AccessibilityService() {
     
             builder.setPositiveButton("Sim") { _, _ ->
                 sendLastCapturedDataToApi()
-    
+     
                 // Reseta o estado
                 lastDetectedButtonText = null
                 fixedCapturedValue = false
@@ -365,17 +366,15 @@ private fun extractDistanceValue(text: String): Double? {
         val token = sharedPreferences.getString("flutter.token", null)
 
         if (token != null) {
-            val urlGastosMensais = "http://192.168.0.118:8000/api/expenses"
+            /* val urlGastosMensais = "http://192.168.0.118:8000/api/expenses"
             val urlInfoones = "http://192.168.0.118:8000/api/infoone"
-            val urlClasscorridas = "http://192.168.0.118:8000/api/classcorridas"
             val urlApi = "http://192.168.0.118:8000/api/lercorridacard"
-            val urlValorporKM = "http://192.168.0.118:8000/api/valorKM"
+            val urlValorporKM = "http://192.168.0.118:8000/api/valorKM" */
             
-            /* val urlGastosMensais = "http://147.79.82.219:8000/api/expenses"
+            val urlGastosMensais = "http://147.79.82.219:8000/api/expenses"
             val urlInfoones = "http://147.79.82.219:8000/api/infoone"
-            val urlClasscorridas = "http://147.79.82.219:8000/api/classcorridas"
             val urlApi = "http://147.79.82.219:8000/api/lercorridacard" 
-            val urlApi = "http://147.79.82.219:8000/api/valorKM" */
+            val urlValorporKM = "http://147.79.82.219:8000/api/valorKM"
             
 
             val requestGastos = Request.Builder()
@@ -444,7 +443,7 @@ private fun extractDistanceValue(text: String): Double? {
                                                 Log.d("AccessibilityService", "Total Lucro: $totalLucro")
                                                 /* val valorKm = (totalLucro / decimalValue) * 100
                                                 Log.d("AccessibilityService", "Total valorKM: $valorKm") */
-                                                val valorPorKm = totalLucro / totalDistance  
+                                                val valorPorKm = totalLucro / totalDistancee  
                                                 Log.d("AccessibilityService", "Total Valor Por KM: $valorPorKm")
 
                                                 // Defina o valor de corridaTipo aqui
@@ -462,7 +461,7 @@ private fun extractDistanceValue(text: String): Double? {
 
                                                 // Montando o request body para enviar os dados à API
                                                 val requestBody = FormBody.Builder()
-                                                    .add("total_distance", totalDistance.toString())
+                                                    .add("total_distance", totalDistancee.toString())
                                                     .add("valor", decimalValue.toString())
                                                     .add("lucro", totalLucro.toString())
                                                     .add("total_custo", totalCusto.toString())
@@ -526,17 +525,19 @@ private fun extractDistanceValue(text: String): Double? {
         val token = sharedPreferences.getString("flutter.token", null)
 
         if (token != null) {
-            val urlGastosMensais = "http://192.168.0.118:8000/api/expenses"
+            /* val urlGastosMensais = "http://192.168.0.118:8000/api/expenses"
             val urlInfoones = "http://192.168.0.118:8000/api/infoone"
-            val urlClasscorridas = "http://192.168.0.118:8000/api/classcorridas"
+            
             val urlApi = "http://192.168.0.118:8000/api/lercorrida"
             val urlApilucro = "http://192.168.0.118:8000/api/monthly-earnings"
+            val urlValorporKM = "http://192.168.0.118:8000/api/valorKM" */
             
-            /* val urlGastosMensais = "http://147.79.82.219:8000/api/expenses"
+            val urlGastosMensais = "http://147.79.82.219:8000/api/expenses"
             val urlInfoones = "http://147.79.82.219:8000/api/infoone"
-            val urlClasscorridas = "http://147.79.82.219:8000/api/classcorridas"
+            
             val urlApi = "http://147.79.82.219:8000/api/lercorrida"
-            val urlApilucro = "http://147.79.82.219:8000/api/monthly-earnings" */
+            val urlApilucro = "http://147.79.82.219:8000/api/monthly-earnings" 
+            val urlValorporKM = "http://192.168.0.118:8000/api/valorKM"
 
             val requestGastos = Request.Builder()
                 .url(urlGastosMensais)
@@ -577,42 +578,42 @@ private fun extractDistanceValue(text: String): Double? {
                                     val diasTrabalhados = infoonesItem.getInt("dias_trab")
                                     val qtdCorridas = infoonesItem.getInt("qtd_corridas")
 
-                                    val requestClasscorridas = Request.Builder()
-                                        .url(urlClasscorridas)
+                                    val requestValorPorKM = Request.Builder()
+                                        .url(urlValorporKM)
                                         .addHeader("Authorization", "Bearer $token")
                                         .build()
 
-                                    client.newCall(requestClasscorridas).enqueue(object : Callback {
+                                    client.newCall(requestValorPorKM).enqueue(object : Callback {
                                         override fun onFailure(call: Call, e: IOException) {
                                             Log.e("API_ERROR", "Failed to fetch classcorridas data: $e")
                                         }
 
                                         override fun onResponse(call: Call, response: Response) {
                                             if (response.isSuccessful) {
-                                                val classcorridasData = response.body?.string()
-                                                val classcorridasArray = JSONArray(classcorridasData)
-                                                val classcorridasItem = classcorridasArray.getJSONObject(0)
+                                                val valorPorKMData = response.body?.string()
+                                                val valorPorKMArray = JSONArray(valorPorKMData)
+                                                val valorPorKMItem = valorPorKMArray.getJSONObject(0)
 
-                                                val corridaBronze = classcorridasItem.getInt("corrida_bronze")
-                                                val corridaOuro = classcorridasItem.getInt("corrida_ouro")
-                                                val corridaDiamante = classcorridasItem.getInt("corrida_diamante")
+                                                val corridaRuim = valorPorKMItem.getDouble("ruim")
+                                                Log.d("AccessibilityService", "Valor Corrida Ruim: $corridaRuim")
+                                                val corridaBoa = valorPorKMItem.getDouble("bom")
+                                                Log.d("AccessibilityService", "Valor Corrida Boa: $corridaBoa")
 
                                                 val totalCusto = (monthlyExpenses / diasTrabalhados) / qtdCorridas
+                                                Log.d("AccessibilityService", "Total Custo: $totalCusto")
                                                 val totalLucro = decimalValue - totalCusto
-                                                val valorKm = (totalLucro / decimalValue) * 100
-                                                val valorPorKm = totalDistance / totalLucro
+                                                Log.d("AccessibilityService", "Total Lucro: $totalLucro")
+                                                /* val valorKm = (totalLucro / decimalValue) * 100
+                                                Log.d("AccessibilityService", "Total valorKM: $valorKm") */
+                                                val valorPorKm = totalLucro / totalDistance 
+                                                Log.d("AccessibilityService", "Total Valor Por KM: $valorPorKm")
 
-                                                // Defina o valor de corridaTipo aqui
-                                                val corridaTipo: String = when {
-                                                    valorKm <= corridaBronze -> "Corrida Bronze"
-                                                    valorKm <= corridaOuro -> "Corrida Ouro"
-                                                    else -> "Corrida Diamante"
+                                                 // Defina o valor de corridaTipo aqui
+                                                 val corridaTipo: String = when {
+                                                    valorPorKm < corridaBoa -> "Corrida Ruim"
+                                                    valorPorKm >= corridaBoa -> "Corrida Boa"
+                                                    else -> ""
                                                 }
-
-                                                /* // Chamando o método que exibe o card com o tipo de corrida e valor por km
-                                                Handler(Looper.getMainLooper()).post {
-                                                    showCustomCard(corridaTipo, totalLucro)
-                                                } */
 
                                                 // Montando o request body para enviar os dados à API
                                                 val requestBody = FormBody.Builder()
@@ -697,11 +698,12 @@ private fun extractDistanceValue(text: String): Double? {
 
     override fun onInterrupt() {}
 
+    private var currentCardView: View? = null // <- variável global (fora da função)
+
     private fun showCustomCard(corridaTipo: String, valorPorKm: Double) {
         try {
-            // Log para verificar se a função foi chamada
             Log.d("TAG", "showCustomCard chamada com corridaTipo: $corridaTipo e valorPorKm: $valorPorKm")
-            
+    
             val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val layoutParams = WindowManager.LayoutParams(
                 850,
@@ -710,24 +712,29 @@ private fun extractDistanceValue(text: String): Double? {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
             )
-            
+    
             layoutParams.gravity = Gravity.TOP
             layoutParams.x = 0
             layoutParams.y = 10
     
+            // Se já existir um card na tela, remove ele antes de exibir o novo
+            currentCardView?.let { viewToRemove ->
+                try {
+                    windowManager.removeView(viewToRemove)
+                    Log.d("TAG", "Card anterior removido antes de exibir o novo.")
+                } catch (e: Exception) {
+                    Log.e("TAG", "Erro ao remover card anterior: ${e.message}")
+                }
+            }
+            
+    
             val view = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null)
             val textViewDistancia: TextView = view.findViewById(R.id.text_view_distancia)
-            /* val textViewGanhoKM: TextView = view.findViewById(R.id.text_view_ganhoKM)  */
             val imageViewCorrida = view.findViewById<ImageView>(R.id.image_view_corrida)
     
-            // Log para verificar se as views foram corretamente encontradas
-            Log.d("TAG", "textViewDistancia: $textViewDistancia, imageViewCorrida: $imageViewCorrida")
-    
-            // Definir o texto conforme os valores capturados
             textViewDistancia.text = "Valor por KM R$ ${"%.2f".format(valorPorKm)}"
             Log.d("TAG", "Texto do KM da corrida definido: R$ ${"%.2f".format(valorPorKm)}")
-            
-            // Log para verificar o tipo de corrida e a imagem correspondente
+    
             val imageUrl = when (corridaTipo) {
                 "Corrida Ruim" -> {
                     Log.d("TAG", "Tipo de corrida: Corrida Ruim")
@@ -743,33 +750,33 @@ private fun extractDistanceValue(text: String): Double? {
                 }
             }
     
-            Glide.with(this) // ou 'context' dependendo do escopo
-                .load(imageUrl) // URL ou caminho da imagem local
-                .into(imageViewCorrida)
+            Glide.with(this).load(imageUrl).into(imageViewCorrida)
     
-            // Log para verificar a cor do texto
             val customGreen = ContextCompat.getColor(this, R.color.custom_green)
             textViewDistancia.setTextColor(customGreen)
-            Log.d("TAG", "Cor do texto definida como custom_green")
     
-            // Exibir a view
+            // Exibe o novo card e guarda referência
             windowManager.addView(view, layoutParams)
+            currentCardView = view // <- atualiza a variável global
+    
             Log.d("TAG", "Card exibido na tela com sucesso.")
     
-            // Remover a notificação após 4 segundos
             Handler(Looper.getMainLooper()).postDelayed({
                 try {
                     windowManager.removeView(view)
                     Log.d("TAG", "Card removido após 5 segundos.")
+                    if (currentCardView == view) {
+                        currentCardView = null
+                    }
                 } catch (e: Exception) {
                     Log.e("TAG", "Erro ao remover o card: ${e.message}")
                 }
             }, 5000)
-            
+    
         } catch (e: Exception) {
-            // Log de erro caso haja uma exceção
             Log.e("TAG", "ERRO NA EXIBIÇÃO DO CARD: ${e.message}")
         }
     }
+    
 
 }
